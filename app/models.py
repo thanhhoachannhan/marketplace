@@ -355,6 +355,8 @@ class Order(models.Model):
     total_price = models.DecimalField(
         max_digits = 10,
         decimal_places = 2,
+        blank = True,
+        null = True,
     )
 
     is_paid = models.BooleanField(
@@ -380,6 +382,9 @@ class Order(models.Model):
     updated_at = models.DateTimeField(
         auto_now = True,
     )
+
+    def __str__(self):
+        return f'Order: {self.id} ( User: {self.user} - Vendor {self.vendor} )'
 
 
 class OrderItem(models.Model):
@@ -411,32 +416,55 @@ class OrderItem(models.Model):
         decimal_places = 2,
     )
 
+    def __str__(self):
+        return f'OrderItem: {self.product} ( Variant: {self.variant} )'
+
 
 class PaymentMethod(models.Model):
+
     name = models.CharField(
-        max_length=50,
-        choices=[
+        max_length = 50,
+        choices = [
             ('Credit Card', 'Credit Card'),
             ('PayPal', 'PayPal'),
             ('Bank Transfer', 'Bank Transfer'),
         ],
     )
-    description = models.TextField(blank=True, null=True)
+
+    description = models.TextField(
+        blank = True,
+        null = True,
+    )
 
     def __str__(self):
         return self.name
 
 
 class Voucher(models.Model):
-    code = models.CharField(max_length=20, unique=True)
-    discount_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_method = models.ForeignKey(
-        to=PaymentMethod,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+
+    code = models.CharField(
+        max_length = 20,
+        unique = True,
     )
-    minimum_order_value = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    discount_amount = models.DecimalField(
+        max_digits = 10,
+        decimal_places = 2,
+    )
+
+    payment_method = models.ForeignKey(
+        to = PaymentMethod,
+        on_delete = models.SET_NULL,
+        blank = True,
+        null = True,
+    )
+
+    minimum_order_value = models.DecimalField(
+        max_digits = 10,
+        decimal_places = 2,
+        default = 0,
+    )
+
     expiry_date = models.DateTimeField()
 
     def is_valid(self, order_total):
@@ -450,48 +478,67 @@ class Voucher(models.Model):
 
 
 class Payment(models.Model):
+
     order = models.ForeignKey(
-        to=Order,
-        on_delete=models.CASCADE,
-        related_name='payments',
+        to = Order,
+        on_delete = models.CASCADE,
+        related_name = 'payments',
     )
+    
     payment_method = models.ForeignKey(
-        to=PaymentMethod,
-        on_delete=models.CASCADE,
+        to = PaymentMethod,
+        on_delete = models.CASCADE,
     )
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_date = models.DateTimeField(auto_now_add=True)
+
+    amount = models.DecimalField(
+        max_digits = 10,
+        decimal_places = 2,
+    )
+
+    payment_date = models.DateTimeField(
+        auto_now_add = True,
+    )
+
     status = models.CharField(
-        max_length=20,
-        choices=[
+        max_length = 20,
+        choices = [
             ('Pending', 'Pending'),
             ('Completed', 'Completed'),
             ('Failed', 'Failed'),
         ],
-        default='Pending',
+        default = 'Pending',
     )
 
     def __str__(self):
-        return f"Payment for Order #{self.order.id} - ${self.amount} - {self.payment_method}"
+        return (
+            f'Payment for Order #{self.order.id} '
+            f'- ${self.amount} - {self.payment_method}'
+        )
 
 
 class VoucherUsage(models.Model):
+
     voucher = models.ForeignKey(
-        to=Voucher,
-        on_delete=models.CASCADE,
-        related_name="usages",
+        to = Voucher,
+        on_delete = models.CASCADE,
+        related_name = "usages",
     )
+
     payment = models.ForeignKey(
-        to=Payment,
-        on_delete=models.CASCADE,
-        related_name="voucher_usages",
+        to = Payment,
+        on_delete = models.CASCADE,
+        related_name = "voucher_usages",
     )
+
     applied_amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0,
+        max_digits = 10,
+        decimal_places = 2,
+        default = 0,
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+
+    created_at = models.DateTimeField(
+        auto_now_add = True,
+    )
 
     def clean(self):
         if self.applied_amount < 0:
@@ -500,3 +547,4 @@ class VoucherUsage(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
+

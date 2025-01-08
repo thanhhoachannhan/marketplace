@@ -14,6 +14,7 @@ from app.models import (
     Attribute,
     AttributeValue,
     ProductVariant,
+    Order, OrderItem,
     Cart, CartItem,
 )
 
@@ -281,10 +282,84 @@ class Command(BaseCommand):
             )
 
         def random_orders():
-            pass
+            
+            users = User.objects.filter(is_vendor=False)
+            vendors = Vendor.objects.all()
+
+            orders = []
+
+            for user in users:
+
+                num_vendors = random.randint(1, len(vendors))
+                selected_vendors = random.sample(
+                    population = list(vendors),
+                    k = num_vendors,
+                )
+
+                for vendor in selected_vendors:
+
+                    order = Order.objects.create(
+                        user = user,
+                        vendor = vendor,
+                    )
+
+                    orders.append(order)
+
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Created {len(orders)} orders across {len(users)} users!'
+                )
+            )
+
+            return orders
 
         def random_order_items():
-            pass
+            
+            orders = Order.objects.all()
+            products = Product.objects.all()
+
+            order_items = []
+
+            for order in orders:
+
+                vendor_products = products.filter(
+                    vendor = order.vendor,
+                )
+
+                if not vendor_products:
+                    continue
+
+                num_items = random.randint(1, 5)
+
+                for _ in range(num_items):
+                    
+                    product = random.sample(
+                        population = list(vendor_products),
+                        k = 1,
+                    )[0]
+
+                    variant = None
+                    if product.variants.exists():
+                        variant = random.sample(
+                            population = list(product.variants.all()),
+                            k = 1,
+                        )[0]
+
+                    quantity = random.randint(1, 10)
+
+                    order_item = OrderItem.objects.create(
+                        order = order,
+                        product = product,
+                        variant = variant,
+                        quantity = quantity,
+                        price = round(random.uniform(10, 500), 2),
+                    )
+
+                    order_items.append(order_item)
+
+            self.stdout.write(
+                self.style.SUCCESS(f'Created {len(order_items)} order items!')
+            )
 
         def random_invoices():
             pass
