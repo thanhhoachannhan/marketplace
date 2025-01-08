@@ -14,6 +14,7 @@ from app.models import (
     Attribute,
     AttributeValue,
     ProductVariant,
+    Cart, CartItem,
 )
 
 
@@ -124,35 +125,51 @@ class Command(BaseCommand):
                 )
             )
 
-        def random_products(categories, vendors):
+        def random_products():
+            vendors = Vendor.objects.all()
+            categories = Category.objects.all()
+
+            if not vendors:
+                raise ValueError(
+                    "No vendors were created. "
+                    "Ensure some users are vendors."
+                )
 
             products = []
 
-            for _ in range(RECORD):
+            for vendor in vendors:
 
-                vendor = random.choice(vendors)
-                category = random.choice(categories)
+                num_products = random.randint(1, RECORD)
 
-                product = Product.objects.create(
-                    vendor = vendor,
-                    category = category,
-                    name = faker.word().capitalize(),
-                    description = faker.text(),
-                    price = round(random.uniform(10, 500), 2),
-                    stock = random.randint(1, 100),
-                )
+                for _ in range(num_products):
 
-                products.append(product)
+                    category = random.choice(categories)
+
+                    product = Product.objects.create(
+                        vendor = vendor,
+                        category = category,
+                        name = faker.word().capitalize(),
+                        description = faker.text(),
+                        price = round(random.uniform(10, 500), 2),
+                        stock = random.randint(1, 100),
+                    )
+
+                    products.append(product)
 
             self.stdout.write(
-                self.style.SUCCESS(f'Created {len(products)} products!')
+                self.style.SUCCESS(
+                    f'Created {len(products)} products '
+                    f'for {len(vendors)} vendors!'
+                )
             )
 
             return products
 
-        def random_product_variants(products):
+        def random_product_variants():
 
-            attribute_values = AttributeValue.objects.all()
+            products = Product.objects.all()
+
+            attribute_values = list(AttributeValue.objects.all())
 
             for product in products:
 
@@ -161,6 +178,7 @@ class Command(BaseCommand):
                 for _ in range(random.randint(1, RECORD)):
 
                     value = random.choice(attribute_values)
+
                     if value in variants:
                         continue
                     variants.add(value)
@@ -177,26 +195,108 @@ class Command(BaseCommand):
                 )
             )
 
+        def random_carts():
+
+            users = User.objects.filter(is_vendor=False)
+            vendors = Vendor.objects.all()
+
+            carts = []
+
+            for user in users:
+
+                num_vendors = random.randint(1, len(vendors))
+                selected_vendors = random.sample(
+                    population = list(vendors),
+                    k = num_vendors,
+                )
+
+                for vendor in selected_vendors:
+
+                    cart = Cart.objects.create(
+                        user = user,
+                        vendor = vendor,
+                    )
+
+                    carts.append(cart)
+
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Created {len(carts)} carts across {len(users)} users!'
+                )
+            )
+
+            return carts
+        
+        def random_cart_items():
+
+            carts = Cart.objects.all()
+            products = Product.objects.all()
+
+            cart_items = []
+
+            for cart in carts:
+
+                vendor_products = products.filter(
+                    vendor = cart.vendor,
+                )
+
+                if not vendor_products:
+                    self.stdout.write(
+                        self.style.ERROR(
+                            f'cart.vendor: {cart.vendor} \n'
+                            f'cart.vendor: {cart.vendor} \n'
+                        )
+                    )
+                    continue
+
+                num_items = random.randint(1, 5)
+
+                for _ in range(num_items):
+                    
+                    product = random.sample(
+                        population = list(vendor_products),
+                        k = 1,
+                    )[0]
+
+                    variant = None
+                    if product.variants.exists():
+                        variant = random.sample(
+                            population = list(product.variants.all()),
+                            k = 1,
+                        )[0]
+
+                    quantity = random.randint(1, 10)
+
+                    cart_item = CartItem.objects.create(
+                        cart = cart,
+                        product = product,
+                        variant = variant,
+                        quantity = quantity,
+                    )
+
+                    cart_items.append(cart_item)
+
+            self.stdout.write(
+                self.style.SUCCESS(f'Created {len(cart_items)} cart items!')
+            )
+
+
         try:
             with transaction.atomic():
 
                 random_user_and_vendor()
 
-                categories = random_category_tree()
+                random_category_tree()
 
                 random_attributes_and_values()
 
-                vendors = list(Vendor.objects.all())
+                random_products()
 
-                if not vendors:
-                    raise ValueError(
-                        "No vendors were created. "
-                        "Ensure some users are vendors."
-                    )
+                random_product_variants()
 
-                products = random_products(categories, vendors)
-
-                random_product_variants(products)
+                random_carts()
+                
+                random_cart_items()
 
                 self.stdout.write(
                     self.style.SUCCESS("Mock data created successfully!")

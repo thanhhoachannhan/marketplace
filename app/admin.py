@@ -108,8 +108,14 @@ class UserAdmin(UserAdmin):
     view_vendor.short_description = 'Vendor Link'
 
 
+class ProductInline(admin.TabularInline):
+    model = Product
+    extra = 1
+    show_change_link = True
+
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin):
+    inlines = [ProductInline]
     list_display = [
         'store_name',
         'user',
@@ -152,6 +158,12 @@ class ProductVariantInline(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductVariantInline]
+    list_display = [
+        'name',
+        'vendor',
+        'category',
+        'price',
+    ]
 
 
 class AttributeValueInline(admin.TabularInline):

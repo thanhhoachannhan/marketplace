@@ -6,6 +6,7 @@ from django.contrib.auth.models import (
     UserManager, GroupManager,
 )
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
@@ -266,34 +267,114 @@ class ProductVariant(models.Model):
     )
 
     def __str__(self):
-        return f"Variant of {self.product.name}"
+        return (
+            f'Variant: {self.product.name} '
+            f'( {self.attribute_value.attribute.name} : '
+            f'{self.attribute_value.value} )'
+        )
 
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, 
-                                related_name='cart')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+
+    user = models.ForeignKey(
+        to = User,
+        on_delete = models.CASCADE,
+        related_name = 'carts',
+    )
+
+    vendor = models.ForeignKey(
+        to = Vendor,
+        on_delete = models.CASCADE,
+        related_name = 'carts',
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add = True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now = True,
+    )
+
+    def __str__(self):
+        return f'Cart ( User: {self.user} | Vendor: {self.vendor} )'
+
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, 
-                             related_name='items')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variant = models.ForeignKey(ProductVariant, on_delete=models.SET_NULL, 
-                                null=True, blank=True)
-    quantity = models.PositiveIntegerField(default=1)
+
+    cart = models.ForeignKey(
+        to = Cart,
+        on_delete = models.CASCADE,
+        related_name = 'items',
+    )
+
+    product = models.ForeignKey(
+        to = Product,
+        on_delete = models.CASCADE,
+    )
+
+    variant = models.ForeignKey(
+        to = ProductVariant,
+        on_delete = models.SET_NULL,
+        null = True,
+        blank = True,
+    )
+
+    quantity = models.PositiveIntegerField(
+        default = 1,
+    )
+
+    def __str__(self):
+        return f'CartItem: {self.product} ( Cart: {self.cart} )'
+
+    def clean(self):
+        if self.cart.vendor != self.product.vendor:
+            raise ValidationError(
+                "The product's vendor does not match the cart's vendor."
+            )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, 
-                             related_name='orders')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    is_paid = models.BooleanField(default=False)
-    status = models.CharField(max_length=20, choices=(
-        ('Pending', 'Pending'), ('Processing', 'Processing'), 
-        ('Shipped', 'Shipped'), ('Delivered', 'Delivered'), 
-        ('Cancelled', 'Cancelled')), default='Pending')
+
+    user = models.ForeignKey(
+        to = User,
+        on_delete = models.CASCADE,
+        related_name = 'orders',
+    )
+
+    total_price = models.DecimalField(
+        max_digits = 10,
+        decimal_places = 2,
+    )
+
+    is_paid = models.BooleanField(
+        default = False,
+    )
+
+    status = models.CharField(
+        max_length = 20,
+        choices = (
+            ('Pending', 'Pending'),
+            ('Processing', 'Processing'), 
+            ('Shipped', 'Shipped'),
+            ('Delivered', 'Delivered'),
+            ('Cancelled', 'Cancelled'),
+        ),
+        default = 'Pending',
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add = True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now = True,
+    )
+    
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, 
