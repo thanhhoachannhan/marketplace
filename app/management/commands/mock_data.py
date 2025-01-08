@@ -361,10 +361,16 @@ class Command(BaseCommand):
                 self.style.SUCCESS(f'Created {len(order_items)} order items!')
             )
 
-        def random_invoices():
+        def random_payment_methods():
+            pass
+
+        def random_voucher():
             pass
 
         def random_payments():
+            pass
+
+        def random_voucher_usage():
             pass
 
         try:
@@ -388,9 +394,13 @@ class Command(BaseCommand):
 
                 random_order_items()
 
-                random_invoices()
+                random_payment_methods()
+
+                random_voucher()
 
                 random_payments()
+
+                random_voucher_usage()
 
                 self.stdout.write(
                     self.style.SUCCESS(
