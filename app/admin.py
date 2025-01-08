@@ -16,7 +16,8 @@ from app.models import (
     Product, ProductVariant,
     Order, OrderItem,
     Cart, CartItem,
-    Payment, Invoice,
+    Payment, PaymentMethod,
+    Voucher, VoucherUsage,
 )
 
 
@@ -140,16 +141,6 @@ class OrderItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
-
-
-class PaymentInline(admin.TabularInline):
-    model = Payment
-    extra = 1
-
-@admin.register(Invoice)
-class InvoiceAdmin(admin.ModelAdmin):
-    inlines = [PaymentInline]
-
 
 class ProductVariantInline(admin.TabularInline):
     model = ProductVariant
