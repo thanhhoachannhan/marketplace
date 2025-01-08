@@ -1,0 +1,4 @@
+**/__pycache__/
+emails/
+log.log
+db.sqlite3
