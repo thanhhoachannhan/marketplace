@@ -280,6 +280,17 @@ class Command(BaseCommand):
                 self.style.SUCCESS(f'Created {len(cart_items)} cart items!')
             )
 
+        def random_orders():
+            pass
+
+        def random_order_items():
+            pass
+
+        def random_invoices():
+            pass
+
+        def random_payments():
+            pass
 
         try:
             with transaction.atomic():
@@ -298,8 +309,18 @@ class Command(BaseCommand):
                 
                 random_cart_items()
 
+                random_orders()
+
+                random_order_items()
+
+                random_invoices()
+
+                random_payments()
+
                 self.stdout.write(
-                    self.style.SUCCESS("Mock data created successfully!")
+                    self.style.SUCCESS(
+                        "Mock data created successfully!"
+                    )
                 )
         
         except Exception as ex:

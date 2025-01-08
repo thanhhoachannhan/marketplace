@@ -32,6 +32,7 @@ class CustomGroupAdmin(GroupAdmin):
         }),
     )
 
+
 class CartInline(admin.StackedInline):
     model = Cart
     extra = 0
@@ -122,6 +123,7 @@ class VendorAdmin(admin.ModelAdmin):
         'is_approved',
     ]
 
+
 class CartItemInline(admin.TabularInline):
     model = CartItem
     extra = 1
@@ -163,6 +165,15 @@ class ProductAdmin(admin.ModelAdmin):
         'vendor',
         'category',
         'price',
+    ]
+
+
+@admin.register(ProductVariant)
+class ProductVariantAdmin(admin.ModelAdmin):
+    list_display = [
+        'product',
+        'attribute_value',
+        'price_modifier',
     ]
 
 
