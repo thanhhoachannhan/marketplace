@@ -11,7 +11,6 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
 
-
 class UserGroup(models.Model):
 
     class Meta:
@@ -147,6 +146,10 @@ class Vendor(models.Model):
 
 class Category(models.Model):
 
+    class Meta:
+        verbose_name = _('category')
+        verbose_name_plural = _('categories')
+
     name = models.CharField(
         verbose_name = 'category_name',
         max_length = 255,
@@ -170,7 +173,7 @@ class Product(models.Model):
     vendor = models.ForeignKey(
         to = Vendor,
         on_delete = models.CASCADE,
-        related_name='products'
+        related_name = 'products',
     )
 
     category = models.ForeignKey(
@@ -215,6 +218,7 @@ class Product(models.Model):
     def __str__(self):
         return f'Product: {self.name}'
 
+
 class Attribute(models.Model):
     name = models.CharField(
         max_length = 255,
@@ -224,32 +228,41 @@ class Attribute(models.Model):
     def __str__(self):
         return self.name
 
+
 class AttributeValue(models.Model):
+
     attribute = models.ForeignKey(
-        to=Attribute,
-        on_delete=models.CASCADE,
-        related_name="values"
+        to = Attribute,
+        on_delete = models.CASCADE,
+        related_name = "values",
     )
-    value = models.CharField(max_length=255)
+
+    value = models.CharField(
+        max_length = 255,
+    )
 
     def __str__(self):
         return f"{self.attribute.name}: {self.value}"
 
 
 class ProductVariant(models.Model):
+
     product = models.ForeignKey(
-        to=Product,
-        on_delete=models.CASCADE,
-        related_name='variants',
+        to = Product,
+        on_delete = models.CASCADE,
+        related_name = 'variants',
     )
-    attribute_values = models.ManyToManyField(
-        to=AttributeValue,
-        related_name="variants"
+
+    attribute_value = models.ForeignKey(
+        to = AttributeValue,
+        related_name = "variants",
+        on_delete = models.CASCADE,
     )
+
     price_modifier = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0,
+        max_digits = 10,
+        decimal_places = 2,
+        default = 0,
     )
 
     def __str__(self):

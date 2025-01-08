@@ -17,3 +17,5 @@ clean:
 	rm -fr emails
 	rm -fr db.sqlite3
 	rm log.log
+mock:
+	python ${MANAGE_FILE}.py mock_data

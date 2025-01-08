@@ -8,7 +8,16 @@ from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 from django.utils.safestring import mark_safe
 
-from app.models import User, UserGroup, Vendor
+from app.models import (
+    User,
+    UserGroup,
+    Vendor,
+    AttributeValue, Attribute,
+    Product, ProductVariant,
+    Order, OrderItem,
+    Cart, CartItem,
+    Payment, Invoice,
+)
 
 
 admin.site.unregister(Group)
@@ -23,12 +32,15 @@ class CustomGroupAdmin(GroupAdmin):
         }),
     )
 
+class CartInline(admin.StackedInline):
+    model = Cart
+    extra = 0
+    can_delete = False
 
 class VendorInline(admin.StackedInline):
     model = Vendor
     extra = 0
     can_delete = False
-
 
 @admin.register(User)
 class UserAdmin(UserAdmin):
@@ -36,7 +48,10 @@ class UserAdmin(UserAdmin):
     class Meta:
         ordering = ('date_joined')
 
-    inlines = [VendorInline]
+    inlines = [
+        VendorInline,
+        CartInline,
+    ]
 
     fieldsets = (
         (None, {
@@ -91,6 +106,63 @@ class UserAdmin(UserAdmin):
     
     view_vendor.allow_tags = True
     view_vendor.short_description = 'Vendor Link'
+
+
+@admin.register(Vendor)
+class VendorAdmin(admin.ModelAdmin):
+    list_display = [
+        'store_name',
+        'user',
+        'is_approved',
+    ]
+
+class CartItemInline(admin.TabularInline):
+    model = CartItem
+    extra = 1
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    inlines = [CartItemInline]
+
+
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 1
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    inlines = [OrderItemInline]
+
+
+class PaymentInline(admin.TabularInline):
+    model = Payment
+    extra = 1
+
+@admin.register(Invoice)
+class InvoiceAdmin(admin.ModelAdmin):
+    inlines = [PaymentInline]
+
+
+class ProductVariantInline(admin.TabularInline):
+    model = ProductVariant
+    extra = 1
+    fields = ['attribute_value', 'price_modifier']
+    show_change_link = True
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    inlines = [ProductVariantInline]
+
+
+class AttributeValueInline(admin.TabularInline):
+    model = AttributeValue
+    extra = 1
+    fields = ['value']
+    show_change_link = True
+
+@admin.register(Attribute)
+class AttributeAdmin(admin.ModelAdmin):
+    inlines = [AttributeValueInline]
 
 
 for model in apps.get_app_config('app').get_models():
