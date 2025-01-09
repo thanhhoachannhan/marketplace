@@ -67,7 +67,7 @@ def login(request):
             print(form.errors)
         return redirect(reverse('login'))
     
-    return render(request, 'login.html', {
+    return render(request, 'account/login.html', {
         'form': LoginForm()
     })
 
@@ -100,7 +100,7 @@ def register(request):
 
     form = RegisterForm()
 
-    return render(request, 'register.html', {
+    return render(request, 'account/register.html', {
         'form': form,
     })
 
@@ -123,7 +123,7 @@ def profile(request):
         
     form = ProfileForm(instance=request.user)
 
-    return render(request, 'profile.html', {
+    return render(request, 'account/profile.html', {
         'form': form,
     })
 
@@ -148,7 +148,7 @@ def change_password(request):
 
     form = PasswordChangeForm(user=request.user)
 
-    return render(request, 'change_password.html', {
+    return render(request, 'account/change_password.html', {
         'form': form,
     })
 
@@ -177,7 +177,7 @@ def forget_password(request):
                 )
             else:
                 subject = "Password Reset Requested"
-                email_template_name = "password_reset_email.html"
+                email_template_name = "account/password_reset_email.html"
 
                 context = {
                     "email": user.email,
@@ -207,7 +207,7 @@ def forget_password(request):
 
     form = PasswordResetForm()
 
-    return render(request, 'forget_password.html', {
+    return render(request, 'account/forget_password.html', {
         'form': form,
     })
 
@@ -228,7 +228,7 @@ def reset_password(request, uidb64, token):
                 return HttpResponse('Password reset successfully.')
         else:
             form = SetNewPasswordForm()
-        return render(request, 'reset_password.html', {
+        return render(request, 'account/reset_password.html', {
             'form': form,
         })
     else:
