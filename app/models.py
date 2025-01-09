@@ -447,6 +447,25 @@ class Order(models.Model):
         auto_now = True,
     )
 
+    def calculate_total_price(self):
+        """
+        Recalculate the total price of the order based on its items.
+        """
+        try:
+            if self.pk is None:
+                return
+
+            total = sum(
+                item.quantity * item.price
+                for item in self.orderitem_set.all()
+            )
+            self.total_price = total
+
+            self.save()
+
+        except Exception as ex:
+            print(ex)
+
     def __str__(self):
         return f'Order: {self.id} ( User: {self.user} - Vendor {self.vendor} )'
 
@@ -456,7 +475,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(
         to=Order,
         on_delete=models.CASCADE,
-        related_name='items',
+        related_name='orderitem_set',
     )
     
     product = models.ForeignKey(
@@ -467,8 +486,8 @@ class OrderItem(models.Model):
     variant = models.ForeignKey(
         to = ProductVariant,
         on_delete = models.SET_NULL,
-        null = True,
         blank = True,
+        null = True,
     )
 
     quantity = models.PositiveIntegerField(
@@ -478,10 +497,22 @@ class OrderItem(models.Model):
     price = models.DecimalField(
         max_digits = 10,
         decimal_places = 2,
+        blank = True,
+        null = True,
     )
 
     def __str__(self):
         return f'OrderItem: {self.product} ( Variant: {self.variant} )'
+
+    def calculate_price(self):
+        """
+        Calculate the price for this item, considering variant modifiers.
+        """
+        base_price = self.product.price
+        variant_modifier = self.variant.price_modifier if self.variant else 0
+        self.price = base_price + variant_modifier
+
+        self.save()
 
 
 class PaymentMethod(models.Model):
@@ -557,6 +588,8 @@ class Payment(models.Model):
     amount = models.DecimalField(
         max_digits = 10,
         decimal_places = 2,
+        blank = True,
+        null = True,
     )
 
     payment_date = models.DateTimeField(
@@ -573,6 +606,30 @@ class Payment(models.Model):
         default = 'Pending',
     )
 
+    def calculate_payment_amount(self):
+        """
+        Calculate the payment amount after applying any valid vouchers.
+        """
+        try:
+            if self.pk is None:
+                return
+
+            order_total = self.order.total_price
+
+            total_discount = sum(
+                usage.voucher.discount_amount
+                for usage in self.voucherusage_set.all()
+                if usage.voucher.is_valid(order_total)
+            ) or 0
+
+            self.amount = max(order_total - total_discount, 0)
+
+            self.save()
+
+        except Exception as ex:
+            print(ex)
+
+
     def __str__(self):
         return (
             f'Payment for Order #{self.order.id} '
@@ -585,13 +642,13 @@ class VoucherUsage(models.Model):
     voucher = models.ForeignKey(
         to = Voucher,
         on_delete = models.CASCADE,
-        related_name = "usages",
+        related_name = "voucherusage_set",
     )
 
     payment = models.ForeignKey(
         to = Payment,
         on_delete = models.CASCADE,
-        related_name = "voucher_usages",
+        related_name = "voucherusage_set",
     )
 
     applied_amount = models.DecimalField(

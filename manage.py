@@ -26,26 +26,26 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticfiles')]
 #-------------------------------------------------
 # Timezone
 #-------------------------------------------------
-USE_TZ = True
-USE_L10N = True
-TIME_ZONE = 'UTC'
+# USE_TZ = True
+# USE_L10N = True
+# TIME_ZONE = 'UTC'
 
 #-------------------------------------------------
 # Languages
 #-------------------------------------------------
-USE_I18N = True
-LANGUAGE_CODE = 'en'
-LOCALE_PATHS = [BASE_DIR / 'locale/',]
-LANGUAGES = (
-    ('en', _('English')),
-    ('vi', _('Vietnamese')),
-)
-if not os.path.exists(BASE_DIR / 'locale'): os.mkdir('locale')
-for lang in LANGUAGES:
-    if not os.path.exists(BASE_DIR / 'locale' / lang[0]):
-        os.mkdir(BASE_DIR / 'locale' / lang[0])
-    if not os.path.exists(BASE_DIR / 'locale' / lang[0] / 'LC_MESSAGES'):
-        os.mkdir(BASE_DIR / 'locale' / lang[0] / 'LC_MESSAGES')
+# USE_I18N = True
+# LANGUAGE_CODE = 'en'
+# LOCALE_PATHS = [BASE_DIR / 'locale/',]
+# LANGUAGES = (
+#     ('en', _('English')),
+#     ('vi', _('Vietnamese')),
+# )
+# if not os.path.exists(BASE_DIR / 'locale'): os.mkdir('locale')
+# for lang in LANGUAGES:
+#     if not os.path.exists(BASE_DIR / 'locale' / lang[0]):
+#         os.mkdir(BASE_DIR / 'locale' / lang[0])
+#     if not os.path.exists(BASE_DIR / 'locale' / lang[0] / 'LC_MESSAGES'):
+#         os.mkdir(BASE_DIR / 'locale' / lang[0] / 'LC_MESSAGES')
 
 #-------------------------------------------------
 # Apps Settings
@@ -68,7 +68,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
 
     # Multiple languages
-    'django.middleware.locale.LocaleMiddleware',
+    # 'django.middleware.locale.LocaleMiddleware',
 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

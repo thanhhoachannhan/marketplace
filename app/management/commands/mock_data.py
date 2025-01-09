@@ -357,7 +357,6 @@ class Command(BaseCommand):
                     order = Order.objects.create(
                         user = user,
                         vendor = vendor,
-                        total_price = round(random.uniform(10, 500), 2),
                     )
 
                     orders.append(order)
@@ -409,8 +408,10 @@ class Command(BaseCommand):
                         product = product,
                         variant = variant,
                         quantity = quantity,
-                        price = round(random.uniform(10, 500), 2),
                     )
+
+                    order_item.calculate_price()
+                    order_item.order.calculate_total_price()
 
                     order_items.append(order_item)
 
@@ -475,7 +476,6 @@ class Command(BaseCommand):
                 payment = Payment.objects.create(
                     order = order,
                     payment_method = payment_method,
-                    amount = round(order.total_price, 2),
                     status = random.choice([
                         'Pending',
                         'Completed',
@@ -503,16 +503,12 @@ class Command(BaseCommand):
 
                 for voucher in selected_vouchers:
 
-                    applied_amount = min(
-                        payment.amount,
-                        voucher.discount_amount,
-                    )
-
                     voucher_usage = VoucherUsage.objects.create(
                         voucher = voucher,
                         payment = payment,
-                        applied_amount = applied_amount,
                     )
+
+                    voucher_usage.payment.calculate_payment_amount()
 
                     voucher_usages.append(voucher_usage)
 
