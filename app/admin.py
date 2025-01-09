@@ -71,9 +71,24 @@ class VoucherUsageInline(admin.TabularInline):
 
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
-    extra = 1
-    fields = ['file', 'is_default', 'rank']
+    extra = 0
+    readonly_fields = ['product_image_preview']
+    fields = ['product_image_preview', 'is_default', 'rank']
     ordering = ['rank']
+    show_change_link = True
+
+    def product_image_preview(self, obj):
+        if obj.file and hasattr(obj.file, 'url'):
+            return format_html(
+                (
+                    '<img src="{}"'
+                    'style="width:50px; height:50px;" />'
+                ),
+                obj.file.url,
+            )
+        return "No Image"
+
+    product_image_preview.short_description = 'File'
 
 
 admin.site.unregister(Group)
@@ -212,7 +227,12 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    inlines = [ProductVariantInline, ProductImageInline]
+
+    inlines = [
+        ProductImageInline,
+        ProductVariantInline,
+    ]
+
     list_display = [
         'name',
         'vendor',
