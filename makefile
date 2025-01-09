@@ -19,3 +19,7 @@ clean:
 	rm log.log
 mock:
 	python ${MANAGE_FILE}.py mock_data
+git:
+	git add .
+	git commit -m update
+	git push

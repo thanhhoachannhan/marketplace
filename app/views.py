@@ -4,6 +4,10 @@ from django.shortcuts import (
     redirect,
     HttpResponse,
 )
+from django.core.serializers import serialize
+from django.http import (
+    JsonResponse,
+)
 from django.urls import reverse
 from django.contrib.auth import (
     login as django_login,
@@ -30,8 +34,12 @@ from app.forms import (
     ProfileForm,
     SetNewPasswordForm,
 )
+from app.models import (
+    Order,
+)
 from app.permissions import (
-    login_required
+    login_required,
+    own_order_required,
 )
 
 
@@ -236,3 +244,13 @@ def reset_password(request, uidb64, token):
     else:
         messages.error(request, "Link is invalid or has expired.")
         return redirect('password_reset')
+
+
+@login_required
+@own_order_required
+def api_order_detail(request, order_id):
+    orders = Order.objects.filter(
+        user = request.user,
+        id = order_id,
+    )
+    return HttpResponse(serialize('json', orders))
