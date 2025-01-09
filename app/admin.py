@@ -8,6 +8,7 @@ from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
+from django.urls import reverse
 
 from app.models import (
     User,
@@ -26,18 +27,27 @@ class CartInline(admin.StackedInline):
     model = Cart
     extra = 0
     can_delete = False
+    show_change_link = True
+
+    def has_change_permission(self, request, obj=None):
+        return False
 
 
 class VendorInline(admin.StackedInline):
     model = Vendor
     extra = 0
-    can_delete = False
+    can_delete = True
+    show_change_link = True
+    readonly_fields = ['store_name', 'store_description']
+    fields = ['store_name', 'store_description', 'is_approved']
+
 
 
 class ProductInline(admin.TabularInline):
     model = Product
     extra = 1
     show_change_link = True
+    readonly_fields = ['description']
 
 
 class CartItemInline(admin.TabularInline):
@@ -139,13 +149,11 @@ class UserAdmin(UserAdmin):
     search_fields = (
         'username__startswith',
         'fullname__startswith',
+        'email__startswith',
     )
     
     def avatar_preview(self, obj):
         if obj.avatar:
-            # avatar_url = obj.avatar.url
-            # if avatar_url.__contains__('https'):
-            #     avatar_url = obj.avatar
             return format_html(
                 (
                     '<img src="{}"'
@@ -165,18 +173,35 @@ class UserAdmin(UserAdmin):
     
     avatar_preview.short_description = 'Avatar'
 
-    view_vendor.allow_tags = True
-    view_vendor.short_description = 'Vendor Link'
+    view_vendor.short_description = 'Vendor'
 
 
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin):
+
     inlines = [ProductInline]
+
     list_display = [
         'store_name',
-        'user',
+        'user_link',
         'is_approved',
     ]
+
+    list_filter = (
+        'is_approved',
+    )
+
+    search_fields = (
+        'store_name__startswith',
+    )
+
+    def user_link(self, obj):
+        if obj.user:
+            url = reverse('admin:app_user_change', args=[obj.user.id])
+            return format_html('<a href="{}">{}</a>', url, obj.user.username)
+        return '-'
+    user_link.short_description = 'User'
+    user_link.admin_order_field = 'user'
 
 
 @admin.register(Cart)
