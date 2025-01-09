@@ -143,15 +143,15 @@ class UserAdmin(UserAdmin):
     
     def avatar_preview(self, obj):
         if obj.avatar:
-            avatar_url = obj.avatar.url
-            if avatar_url.__contains__('https'):
-                avatar_url = obj.avatar
+            # avatar_url = obj.avatar.url
+            # if avatar_url.__contains__('https'):
+            #     avatar_url = obj.avatar
             return format_html(
                 (
                     '<img src="{}"'
-                    'style="width: 50px; height: 50px; border-radius: 50%;" />'
+                    'style="width:50px; height:50px; border-radius:50%;" />'
                 ),
-                avatar_url,
+                obj.avatar.url,
             )
         return "No Avatar"
     

@@ -1,7 +1,8 @@
 
-import random
+import random, requests
 
 from django.core.management.base import BaseCommand
+from django.core.files.base import ContentFile
 from django.db import transaction
 
 from faker import Faker
@@ -48,11 +49,22 @@ class Command(BaseCommand):
 
                     email = faker.email(),
                     fullname = faker.name(),
-                    avatar = faker.image_url(),
                     address = faker.address(),
 
                     is_vendor = random_boolean(),
                 )
+
+                try:
+                    response = requests.get(faker.image_url())
+                    user.avatar.save(
+                        f"{faker.uuid4()}.jpg",
+                        ContentFile(response.content),
+                        save=True,
+                    )
+                except Exception as ex:
+                    self.stdout.write(
+                        self.style.ERROR(ex),
+                    )
 
                 if user.is_vendor:
                     Vendor.objects.create(

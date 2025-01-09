@@ -15,6 +15,7 @@ clean:
 	pyclean .
 	rm -fr app/migrations
 	rm -fr emails
+	rm -fr uploads
 	rm -fr db.sqlite3
 	rm log.log
 mock:
