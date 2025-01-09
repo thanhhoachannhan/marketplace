@@ -620,7 +620,7 @@ class Payment(models.Model):
                 usage.voucher.discount_amount
                 for usage in self.voucherusage_set.all()
                 if usage.voucher.is_valid(order_total)
-            ) or 0
+            )
 
             self.amount = max(order_total - total_discount, 0)
 

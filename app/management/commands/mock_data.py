@@ -491,7 +491,7 @@ class Command(BaseCommand):
 
         def random_voucher_usage():
 
-            payments = Payment.objects.filter(status='Completed')
+            payments = Payment.objects.all()
             vouchers = list(Voucher.objects.all())
 
             voucher_usages = []
@@ -508,9 +508,10 @@ class Command(BaseCommand):
                         payment = payment,
                     )
 
-                    voucher_usage.payment.calculate_payment_amount()
 
                     voucher_usages.append(voucher_usage)
+
+                payment.calculate_payment_amount()
 
             self.stdout.write(
                 self.style.SUCCESS(
