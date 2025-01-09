@@ -1,5 +1,6 @@
 **/__pycache__/
 emails/
 migrations/
+uploads/
 log.log
 db.sqlite3

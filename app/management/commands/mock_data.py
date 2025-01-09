@@ -48,6 +48,7 @@ class Command(BaseCommand):
 
                     email = faker.email(),
                     fullname = faker.name(),
+                    avatar = faker.image_url(),
                     address = faker.address(),
 
                     is_vendor = random_boolean(),
