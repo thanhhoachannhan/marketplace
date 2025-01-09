@@ -28,19 +28,9 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 
-from app.forms import (
-    LoginForm,
-    RegisterForm,
-    ProfileForm,
-    SetNewPasswordForm,
-)
-from app.models import (
-    Order,
-)
-from app.permissions import (
-    login_required,
-    own_order_required,
-)
+from .forms import *
+from .models import *
+from .permissions import *
 
 
 User = get_user_model()

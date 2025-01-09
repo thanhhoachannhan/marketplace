@@ -246,6 +246,54 @@ class AttributeValue(models.Model):
         return f"{self.attribute.name}: {self.value}"
 
 
+class ProductImage(models.Model):
+
+    product = models.ForeignKey(
+        to = Product,
+        on_delete = models.CASCADE,
+        related_name = 'images',
+        verbose_name = _('product'),
+    )
+
+    file = models.ImageField(
+        verbose_name = _('image'),
+        upload_to = 'product_images/',
+        blank = True,
+        null = True,
+    )
+
+    is_default = models.BooleanField(
+        verbose_name = _('is default'),
+        default = False,
+    )
+
+    rank = models.PositiveIntegerField(
+        verbose_name = _('rank'),
+        default = 0,
+        help_text = _('The rank of the image. Smaller numbers appear first.'),
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add = True,
+        verbose_name = _('created at'),
+    )
+
+    class Meta:
+        verbose_name = _('product image')
+        verbose_name_plural = _('product images')
+        ordering = ['rank', 'created_at']
+
+    def __str__(self):
+        return f"Image for {self.product.name} (Rank: {self.rank})"
+
+    def clean(self):
+        if self.is_default:
+            # Đảm bảo chỉ có một ảnh mặc định cho mỗi sản phẩm
+            ProductImage.objects.filter(
+                product=self.product, is_default=True
+            ).exclude(id=self.id).update(is_default=False)
+
+
 class ProductVariant(models.Model):
 
     product = models.ForeignKey(
@@ -260,6 +308,15 @@ class ProductVariant(models.Model):
         on_delete = models.CASCADE,
     )
 
+    image = models.ForeignKey(
+        to = ProductImage,
+        on_delete = models.SET_NULL,
+        blank = True,
+        null = True,
+        related_name = "variant_images",
+        verbose_name = _('variant image'),
+    )
+
     price_modifier = models.DecimalField(
         max_digits = 10,
         decimal_places = 2,
@@ -272,7 +329,14 @@ class ProductVariant(models.Model):
             f'( {self.attribute_value.attribute.name} : '
             f'{self.attribute_value.value} )'
         )
-
+    
+    def get_image(self):
+        """Return the image for the variant or the default product image."""
+        if self.image:
+            return self.image.image.url
+        default_image = self.product.images.filter(is_default=True).first()
+        return default_image.image.url if default_image else None
+    
 
 class Cart(models.Model):
 

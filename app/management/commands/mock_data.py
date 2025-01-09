@@ -7,22 +7,10 @@ from django.db import transaction
 
 from faker import Faker
 
-from app.models import (
-    User,
-    Vendor,
-    Category,
-    Product,
-    Attribute,
-    AttributeValue,
-    ProductVariant,
-    Order, OrderItem,
-    Cart, CartItem,
-    Payment, PaymentMethod,
-    Voucher, VoucherUsage,
-)
+from app.models import *
 
 
-RECORD = 10
+RECORD = 3
 MAX_DEPTH = 3
 PASSWORD = 'test'
 
@@ -185,6 +173,45 @@ class Command(BaseCommand):
 
             return products
 
+        def random_product_images():
+            products = Product.objects.all()
+            images = []
+
+            for product in products:
+                num_images = random.randint(1, RECORD)
+                for i in range(num_images):
+                    image = ProductImage.objects.create(
+                        product = product,
+                        is_default = (i == 0),
+                        rank = i + 1,
+                    )
+                    product_image_url = faker.image_url(
+                        placeholder_url = (
+                            'https://picsum.photos/{width}/{height}'
+                        )
+                    )
+                    try:
+                        response = requests.get(product_image_url)
+                        image.file.save(
+                            f"{faker.uuid4()}.jpg",
+                            ContentFile(response.content),
+                            save=True,
+                        )
+                    except Exception as ex:
+                        self.stdout.write(
+                            self.style.ERROR(ex),
+                        )
+
+                    images.append(image)
+
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Created {len(images)} product images '
+                    f'for {len(products)} products!'
+                )
+            )
+
+
         def random_product_variants():
 
             products = Product.objects.all()
@@ -192,6 +219,11 @@ class Command(BaseCommand):
             attribute_values = list(AttributeValue.objects.all())
 
             for product in products:
+
+                product_images = ProductImage.objects.filter(
+                    product = product,
+                    is_default = False,
+                )
 
                 variants = set()
 
@@ -203,10 +235,15 @@ class Command(BaseCommand):
                         continue
                     variants.add(value)
 
+                    image = None
+                    if product_images:
+                        image = random.choice(product_images)
+
                     ProductVariant.objects.create(
-                        product=product,
-                        attribute_value=value,
-                        price_modifier=round(random.uniform(0, 50), 2),
+                        product = product,
+                        attribute_value = value,
+                        image = image,
+                        price_modifier = round(random.uniform(0, 50), 2),
                     )
 
             self.stdout.write(
@@ -495,6 +532,8 @@ class Command(BaseCommand):
                 random_attributes_and_values()
 
                 random_products()
+
+                random_product_images()
 
                 random_product_variants()
 

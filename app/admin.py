@@ -10,17 +10,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from django.urls import reverse
 
-from app.models import (
-    User,
-    UserGroup,
-    Vendor,
-    AttributeValue, Attribute,
-    Product, ProductVariant,
-    Order, OrderItem,
-    Cart, CartItem,
-    Payment, PaymentMethod,
-    Voucher, VoucherUsage,
-)
+from .models import *
 
 
 class CartInline(admin.StackedInline):
@@ -40,7 +30,6 @@ class VendorInline(admin.StackedInline):
     show_change_link = True
     readonly_fields = ['store_name', 'store_description']
     fields = ['store_name', 'store_description', 'is_approved']
-
 
 
 class ProductInline(admin.TabularInline):
@@ -78,6 +67,13 @@ class VoucherUsageInline(admin.TabularInline):
     model = VoucherUsage
     extra = 1
     show_change_link = True
+
+
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 1
+    fields = ['file', 'is_default', 'rank']
+    ordering = ['rank']
 
 
 admin.site.unregister(Group)
@@ -173,8 +169,8 @@ class UserAdmin(UserAdmin):
     
     avatar_preview.short_description = 'Avatar'
 
-    view_vendor.short_description = 'Vendor'
 
+    view_vendor.short_description = 'Vendor'
 
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin):
@@ -216,7 +212,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    inlines = [ProductVariantInline]
+    inlines = [ProductVariantInline, ProductImageInline]
     list_display = [
         'name',
         'vendor',
@@ -229,9 +225,23 @@ class ProductAdmin(admin.ModelAdmin):
 class ProductVariantAdmin(admin.ModelAdmin):
     list_display = [
         'product',
+        'product_image_preview',
         'attribute_value',
         'price_modifier',
     ]
+
+    def product_image_preview(self, obj):
+        if obj.image and obj.image.file and hasattr(obj.image.file, 'url'):
+            return format_html(
+                (
+                    '<img src="{}"'
+                    'style="width:50px; height:50px;" />'
+                ),
+                obj.image.file.url,
+            )
+        return "No Image"
+    
+    product_image_preview.short_description = 'Image'
 
 
 @admin.register(Attribute)
