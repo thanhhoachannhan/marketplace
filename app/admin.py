@@ -179,6 +179,16 @@ class AttributeAdmin(admin.ModelAdmin):
     inlines = [AttributeValueInline]
 
 
+class VoucherUsageInline(admin.TabularInline):
+    model = VoucherUsage
+    extra = 1
+    show_change_link = True
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    inlines = [VoucherUsageInline]
+
+
 for model in apps.get_app_config('app').get_models():
     try: admin.site.register(model)
     except: pass

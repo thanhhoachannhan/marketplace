@@ -16,6 +16,8 @@ from app.models import (
     ProductVariant,
     Order, OrderItem,
     Cart, CartItem,
+    Payment, PaymentMethod,
+    Voucher, VoucherUsage,
 )
 
 
@@ -301,6 +303,7 @@ class Command(BaseCommand):
                     order = Order.objects.create(
                         user = user,
                         vendor = vendor,
+                        total_price = round(random.uniform(10, 500), 2),
                     )
 
                     orders.append(order)
@@ -362,16 +365,108 @@ class Command(BaseCommand):
             )
 
         def random_payment_methods():
-            pass
+
+            payment_methods = [
+                'Credit Card',
+                'PayPal',
+                'Bank Transfer',
+            ]
+
+            for method in payment_methods:
+
+                PaymentMethod.objects.create(
+                    name = method,
+                    description = f"Payment method {method} description",
+                )
+
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Created {len(payment_methods)} payment methods!'
+                )
+            )
 
         def random_voucher():
-            pass
+
+            payment_methods = list(PaymentMethod.objects.all())
+            payment_methods.append(None)
+
+            vouchers = []
+
+            for _ in range(RECORD):
+
+                voucher = Voucher.objects.create(
+                    code = faker.uuid4()[:8].upper(),
+                    discount_amount = round(random.uniform(5, 50), 2),
+                    payment_method = random.choice(payment_methods),
+                    minimum_order_value = round(random.uniform(50, 200), 2),
+                    expiry_date = faker.future_date(end_date='+30d'),
+                )
+
+                vouchers.append(voucher)
+
+            self.stdout.write(
+                self.style.SUCCESS(f'Created {len(vouchers)} vouchers!')
+            )
 
         def random_payments():
-            pass
+
+            orders = Order.objects.all()
+            payment_methods = list(PaymentMethod.objects.all())
+
+            payments = []
+            
+            for order in orders:
+                payment_method = random.choice(payment_methods)
+
+                payment = Payment.objects.create(
+                    order = order,
+                    payment_method = payment_method,
+                    amount = round(order.total_price, 2),
+                    status = random.choice([
+                        'Pending',
+                        'Completed',
+                        'Failed',
+                    ]),
+                )
+
+                payments.append(payment)
+
+            self.stdout.write(
+                self.style.SUCCESS(f'Created {len(payments)} payments!')
+            )
 
         def random_voucher_usage():
-            pass
+
+            payments = Payment.objects.filter(status='Completed')
+            vouchers = list(Voucher.objects.all())
+
+            voucher_usages = []
+
+            for payment in payments:
+
+                num_vouchers = random.randint(1, min(len(vouchers), 3))
+                selected_vouchers = random.sample(vouchers, num_vouchers)
+
+                for voucher in selected_vouchers:
+
+                    applied_amount = min(
+                        payment.amount,
+                        voucher.discount_amount,
+                    )
+
+                    voucher_usage = VoucherUsage.objects.create(
+                        voucher = voucher,
+                        payment = payment,
+                        applied_amount = applied_amount,
+                    )
+
+                    voucher_usages.append(voucher_usage)
+
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Created {len(voucher_usages)} voucher usages!'
+                )
+            )
 
         try:
             with transaction.atomic():

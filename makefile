@@ -8,7 +8,7 @@ init:
 	python ${MANAGE_FILE}.py makemigrations app
 	python ${MANAGE_FILE}.py migrate
 	python ${MANAGE_FILE}.py shell -c "from django.contrib.auth import get_user_model; get_user_model().objects.filter(username='admin').exists() or get_user_model().objects.create_superuser('admin', 'admin@admin.com', 'admin')"
-	python ${MANAGE_FILE}.py runserver ${HOST}:${PORT}
+	# python ${MANAGE_FILE}.py runserver ${HOST}:${PORT}
 up:
 	python ${MANAGE_FILE}.py runserver ${HOST}:${PORT}
 clean:
