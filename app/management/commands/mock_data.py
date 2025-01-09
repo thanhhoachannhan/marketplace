@@ -54,8 +54,12 @@ class Command(BaseCommand):
                     is_vendor = random_boolean(),
                 )
 
+                avatar_url = faker.image_url(
+                    placeholder_url = 'https://picsum.photos/{width}/{height}'
+                )
+
                 try:
-                    response = requests.get(faker.image_url())
+                    response = requests.get(avatar_url)
                     user.avatar.save(
                         f"{faker.uuid4()}.jpg",
                         ContentFile(response.content),
