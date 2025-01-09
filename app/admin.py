@@ -51,9 +51,23 @@ class OrderItemInline(admin.TabularInline):
 
 class ProductVariantInline(admin.TabularInline):
     model = ProductVariant
-    extra = 1
-    fields = ['attribute_value', 'price_modifier']
+    extra = 0
+    readonly_fields = ['product_image_preview']
+    fields = ['attribute_value', 'product_image_preview', 'price_modifier']
     show_change_link = True
+
+    def product_image_preview(self, obj):
+        if obj.image and obj.image.file and hasattr(obj.image.file, 'url'):
+            return format_html(
+                (
+                    '<img src="{}"'
+                    'style="width:50px; height:50px;" />'
+                ),
+                obj.image.file.url,
+            )
+        return "No Image"
+
+    product_image_preview.short_description = 'Image'
 
 
 class AttributeValueInline(admin.TabularInline):
