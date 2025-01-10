@@ -174,7 +174,7 @@ class Product(models.Model):
     vendor = models.ForeignKey(
         to = Vendor,
         on_delete = models.CASCADE,
-        related_name = 'products',
+        related_name = 'product_set',
     )
 
     category = models.ForeignKey(
@@ -182,7 +182,7 @@ class Product(models.Model):
         on_delete = models.SET_NULL,
         blank = True,
         null = True,
-        related_name = 'products',
+        related_name = 'product_set',
     )
 
     name = models.CharField(
@@ -241,7 +241,7 @@ class AttributeValue(models.Model):
     attribute = models.ForeignKey(
         to = Attribute,
         on_delete = models.CASCADE,
-        related_name = 'values',
+        related_name = 'attributevalue_set',
     )
 
     value = models.CharField(
@@ -305,12 +305,12 @@ class ProductVariant(models.Model):
     product = models.ForeignKey(
         to = Product,
         on_delete = models.CASCADE,
-        related_name = 'variants',
+        related_name = 'productvariant_set',
     )
 
     attribute_value = models.ForeignKey(
         to = AttributeValue,
-        related_name = 'variants',
+        related_name = 'productvariant_set',
         on_delete = models.CASCADE,
     )
 
@@ -319,7 +319,7 @@ class ProductVariant(models.Model):
         on_delete = models.SET_NULL,
         blank = True,
         null = True,
-        related_name = 'variant_images',
+        # related_name = 'variant_images', //?
         verbose_name = _('variant image'),
     )
 

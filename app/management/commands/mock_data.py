@@ -316,9 +316,9 @@ class Command(BaseCommand):
                     )[0]
 
                     variant = None
-                    if product.variants.exists():
+                    if product.productvariant_set.exists():
                         variant = random.sample(
-                            population = list(product.variants.all()),
+                            population = list(product.productvariant_set.all()),
                             k = 1,
                         )[0]
 
@@ -397,9 +397,9 @@ class Command(BaseCommand):
                     )[0]
 
                     variant = None
-                    if product.variants.exists():
+                    if product.productvariant_set.exists():
                         variant = random.sample(
-                            population = list(product.variants.all()),
+                            population = list(product.productvariant_set.all()),
                             k = 1,
                         )[0]
                     
