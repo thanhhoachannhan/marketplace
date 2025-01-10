@@ -262,7 +262,13 @@ class Product(models.Model):
 
 
 class Attribute(models.Model):
+
+    class Meta:
+        verbose_name = _('ATTRIBUTE')
+        verbose_name_plural = _('ATTRIBUTES')
+
     name = models.CharField(
+        verbose_name = _('NAME'),
         max_length = 255,
         unique = True,
     )
@@ -274,58 +280,66 @@ class Attribute(models.Model):
 class AttributeValue(models.Model):
 
     attribute = models.ForeignKey(
+        verbose_name = _('ATTRIBUTE'),
         to = Attribute,
         on_delete = models.CASCADE,
         # related_name = 'attributevalue_set',
     )
 
     value = models.CharField(
+        verbose_name = _('VALUE'),
         max_length = 255,
     )
 
     def __str__(self):
-        return f'{self.attribute.name}: {self.value}'
+        return ('{}: {}').format(
+            self.attribute.name,
+            self.value,
+        )
 
 
 class ProductImage(models.Model):
 
+    class Meta:
+        verbose_name = _('PRODUCT_IMAGE')
+        verbose_name_plural = _('PRODUCT_IMAGES')
+        ordering = ['rank', 'created_at']
+
     product = models.ForeignKey(
         to = Product,
+        verbose_name = _('PRODUCT'),
         on_delete = models.CASCADE,
         # related_name = 'productimage_set',
-        verbose_name = _('product'),
     )
 
     file = models.ImageField(
-        verbose_name = _('image'),
+        verbose_name = _('FILE'),
         upload_to = 'product_images/',
         blank = True,
         null = True,
     )
 
     is_default = models.BooleanField(
-        verbose_name = _('is default'),
+        verbose_name = _('IS_DEFAULT'),
         default = False,
     )
 
     rank = models.PositiveIntegerField(
-        verbose_name = _('rank'),
+        verbose_name = _('RANK'),
         default = 0,
-        help_text = _('The rank of the image. Smaller numbers appear first.'),
+        help_text = _('THE_RANK_OF_IMAGE'),
     )
 
     created_at = models.DateTimeField(
+        verbose_name = _('CREATED_AT'),
         auto_now_add = True,
-        verbose_name = _('created at'),
     )
 
-    class Meta:
-        verbose_name = _('product image')
-        verbose_name_plural = _('product images')
-        ordering = ['rank', 'created_at']
-
     def __str__(self):
-        return f'Image for {self.product.name} (Rank: {self.rank})'
+        return ('Image for {} (Rank: {})').format(
+            self.product.name,
+            self.rank,
+        )
 
     def clean(self):
         '''
