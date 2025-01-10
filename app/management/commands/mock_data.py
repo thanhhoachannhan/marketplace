@@ -387,6 +387,8 @@ class Command(BaseCommand):
 
                 num_items = random.randint(1, 5)
 
+                order_products_added = set()
+
                 for _ in range(num_items):
                     
                     product = random.sample(
@@ -400,6 +402,10 @@ class Command(BaseCommand):
                             population = list(product.variants.all()),
                             k = 1,
                         )[0]
+                    
+                    if (product, variant) in order_products_added:
+                        continue
+                    order_products_added.add((product, variant))
 
                     quantity = random.randint(1, 10)
 

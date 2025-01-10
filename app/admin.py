@@ -237,6 +237,13 @@ class CartAdmin(admin.ModelAdmin):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
+    list_display = [
+        'user',
+        'vendor',
+        'total_price',
+        'is_paid',
+        'status',
+    ]
 
 
 @admin.register(Product)
