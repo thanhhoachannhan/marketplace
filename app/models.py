@@ -219,6 +219,12 @@ class Product(models.Model):
     def __str__(self):
         return f'Product: {self.name}'
 
+    def get_default_image(self):
+        default_image = self.productimage_set.filter(
+            is_default = True,
+        ).first()
+        return default_image
+
 
 class Attribute(models.Model):
     name = models.CharField(
@@ -251,7 +257,7 @@ class ProductImage(models.Model):
     product = models.ForeignKey(
         to = Product,
         on_delete = models.CASCADE,
-        related_name = 'images',
+        related_name = 'productimage_set',
         verbose_name = _('product'),
     )
 

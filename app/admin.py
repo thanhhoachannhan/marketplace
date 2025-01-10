@@ -257,12 +257,30 @@ class ProductAdmin(admin.ModelAdmin):
         ProductVariantInline,
     ]
 
+    readonly_fields = [
+        'default_image_preview',
+    ]
+
     list_display = [
         'name',
+        'default_image_preview',
         'vendor',
         'category',
         'price',
     ]
+
+    def default_image_preview(self, obj):
+        if obj.get_default_image():
+            return format_html(
+                (
+                    '<img src="{}"'
+                    'style="width:50px; height:50px;" />'
+                ),
+                obj.get_default_image().file.url,
+            )
+        return "No Default Image"
+    
+    default_image_preview.short_description = 'Default Image'
 
 
 @admin.register(ProductVariant)
