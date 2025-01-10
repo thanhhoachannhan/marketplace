@@ -142,7 +142,11 @@ class Vendor(models.Model):
     )
 
     def __str__(self):
-        return f'{self.store_name} ( Own: {self.user} )'
+        return ('{} [{}: {}]').format(
+            self.store_name,
+            _("OWN"),
+            self.user,
+        )
 
 
 class Category(models.Model):
@@ -165,8 +169,16 @@ class Category(models.Model):
     )
 
     def __str__(self):
-        parent_name = self.parent.name if self.parent else 'None'
-        return f'{self.name} (Parent: {parent_name})'
+
+        parent_name = _('NONE')
+        if self.parent:
+            parent_name = self.parent.name
+
+        return ('{} [{}: {}]').format(
+            self.name,
+            _('PARENT'),
+            parent_name,
+        )
 
 
 class Product(models.Model):
