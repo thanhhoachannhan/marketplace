@@ -125,6 +125,7 @@ class Vendor(models.Model):
     user = models.ForeignKey(
         to = User,
         on_delete = models.CASCADE,
+        # related_name = 'vendor_set',
     )
 
     store_name = models.CharField(
@@ -393,6 +394,7 @@ class CartItem(models.Model):
     product = models.ForeignKey(
         to = Product,
         on_delete = models.CASCADE,
+        # related_name = 'cartitem_set',
     )
 
     variant = models.ForeignKey(
@@ -400,6 +402,7 @@ class CartItem(models.Model):
         on_delete = models.SET_NULL,
         null = True,
         blank = True,
+        # related_name = 'cartitem_set',
     )
 
     quantity = models.PositiveIntegerField(
@@ -502,6 +505,7 @@ class OrderItem(models.Model):
     product = models.ForeignKey(
         to = Product,
         on_delete = models.CASCADE,
+        # related_name='orderitem_set',
     )
 
     variant = models.ForeignKey(
@@ -509,6 +513,7 @@ class OrderItem(models.Model):
         on_delete = models.SET_NULL,
         blank = True,
         null = True,
+        # related_name='orderitem_set',
     )
 
     quantity = models.PositiveIntegerField(
@@ -573,6 +578,7 @@ class Voucher(models.Model):
         on_delete = models.SET_NULL,
         blank = True,
         null = True,
+        # related_name='voucher_set',
     )
 
     minimum_order_value = models.DecimalField(
@@ -604,6 +610,7 @@ class Payment(models.Model):
     payment_method = models.ForeignKey(
         to = PaymentMethod,
         on_delete = models.CASCADE,
+        # related_name = 'payment_set',
     )
 
     amount = models.DecimalField(
