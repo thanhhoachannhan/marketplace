@@ -396,7 +396,7 @@ class ProductVariant(models.Model):
 
     def __str__(self):
         return ('{}: {} [{}: {}]').format(
-            _('VARIANT'),
+            _('PRODUCT_VARIANT'),
             self.product.name,
             self.attribute_value.attribute.name,
             self.attribute_value.value,
@@ -453,20 +453,27 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
 
+    class Meta:
+        verbose_name = _('CART_ITEM')
+        verbose_name_plural = _('CART_ITEMS')
+
     cart = models.ForeignKey(
         to = Cart,
+        verbose_name = _('CART'),
         on_delete = models.CASCADE,
         # related_name = 'cartitem_set',
     )
 
     product = models.ForeignKey(
         to = Product,
+        verbose_name = _('PRODUCT'),
         on_delete = models.CASCADE,
         # related_name = 'cartitem_set',
     )
 
     variant = models.ForeignKey(
         to = ProductVariant,
+        verbose_name = _('PRODUCT_VARIANT'),
         on_delete = models.SET_NULL,
         null = True,
         blank = True,
