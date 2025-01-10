@@ -142,7 +142,7 @@ class Vendor(models.Model):
     )
 
     def __str__(self):
-        return f'Vendor: {self.store_name} ( Own: {self.user} )'
+        return f'{self.store_name} ( Own: {self.user} )'
 
 
 class Category(models.Model):
@@ -467,7 +467,10 @@ class Order(models.Model):
             print(ex)
 
     def __str__(self):
-        return f'Order: {self.id} ( User: {self.user} - Vendor {self.vendor} )'
+        return (
+            f'Order: {self.id} - ${self.total_price} '
+            f'( User: {self.user} - Vendor: {self.vendor} )'
+        )
 
 
 class OrderItem(models.Model):

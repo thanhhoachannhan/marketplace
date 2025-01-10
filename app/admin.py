@@ -79,8 +79,11 @@ class AttributeValueInline(admin.TabularInline):
 
 class VoucherUsageInline(admin.TabularInline):
     model = VoucherUsage
-    extra = 1
+    extra = 0
     show_change_link = True
+    
+    def has_change_permission(self, request, obj=None):
+        return False
 
 
 class ProductImageInline(admin.TabularInline):
@@ -288,6 +291,17 @@ class ProductVariantAdmin(admin.ModelAdmin):
 @admin.register(Attribute)
 class AttributeAdmin(admin.ModelAdmin):
     inlines = [AttributeValueInline]
+    list_display = [
+        'name',
+    ]
+
+
+@admin.register(AttributeValue)
+class AttributeValueAdmin(admin.ModelAdmin):
+    list_display = [
+        'attribute',
+        'value',
+    ]
 
 
 @admin.register(Payment)
