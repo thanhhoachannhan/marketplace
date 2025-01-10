@@ -395,13 +395,11 @@ class ProductVariant(models.Model):
     )
 
     def __str__(self):
-        return ('').format(
-
-        )
-        return (
-            f'Variant: {self.product.name} '
-            f'( {self.attribute_value.attribute.name} : '
-            f'{self.attribute_value.value} )'
+        return ('{}: {} [{}: {}]').format(
+            _('VARIANT'),
+            self.product.name,
+            self.attribute_value.attribute.name,
+            self.attribute_value.value,
         )
     
     def get_image(self):
@@ -416,6 +414,10 @@ class ProductVariant(models.Model):
 
 class Cart(models.Model):
 
+    class Meta:
+        verbose_name = _('CART')
+        verbose_name_plural = _('CARTS')
+
     user = models.ForeignKey(
         to = User,
         on_delete = models.CASCADE,
@@ -424,20 +426,29 @@ class Cart(models.Model):
 
     vendor = models.ForeignKey(
         to = Vendor,
+        verbose_name = _('VENDOR'),
         on_delete = models.CASCADE,
         # related_name = 'cart_set',
     )
 
     created_at = models.DateTimeField(
+        verbose_name = _('CREATED_AT'),
         auto_now_add = True,
     )
 
     updated_at = models.DateTimeField(
+        verbose_name = _('UPDATED_AT'),
         auto_now = True,
     )
 
     def __str__(self):
-        return f'Cart ( User: {self.user} | Vendor: {self.vendor} )'
+        return ('{} [{}: {} - {}: {}]').format(
+            _('CART'),
+            _('USER'),
+            self.user,
+            _('VENDOR'),
+            self.vendor,
+        )
 
 
 class CartItem(models.Model):
