@@ -1,8 +1,10 @@
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls.i18n import i18n_patterns
+from django.shortcuts import HttpResponse, render
 
 from app.views import (
     index,
@@ -18,6 +20,15 @@ from app.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),
+
+    path('403', lambda request: HttpResponse('403'), name='403'),
+    path(
+        'change_language/',
+        lambda request: render(request, 'change_language.html'),
+        name='change_language',
+    ),
+
     path('index/', index, name='index'),
     path('login/', login, name='login'),
     path('logout/', logout, name='logout'),
@@ -37,6 +48,11 @@ urlpatterns = [
         name = 'api_order_detail'
     ),
 ]
+
+urlpatterns += i18n_patterns(
+
+    # prefix_default_language = False
+)
 
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

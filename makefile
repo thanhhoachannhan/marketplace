@@ -16,6 +16,7 @@ clean:
 	rm -fr app/migrations
 	rm -fr emails
 	rm -fr uploads
+	rm -fr locale
 	rm -fr db.sqlite3
 	rm log.log
 mock:
@@ -24,3 +25,9 @@ git:
 	git add .
 	git commit -m update
 	git push
+trans_init:
+	# https://github.com/vslavik/gettext-tools-windows/releases
+	# sudo apt-get install gettext
+	django-admin makemessages --all --ignore=env
+trans:
+	django-admin compilemessages --ignore=env

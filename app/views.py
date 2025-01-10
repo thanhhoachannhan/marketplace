@@ -94,7 +94,7 @@ def register(request):
             user.password = make_password(form.cleaned_data['password'])
             user.save()
             
-            messages.success(request, "Register successfully!")
+            messages.success(request, 'Register successfully!')
 
             return redirect(reverse('login'))
 
@@ -118,7 +118,7 @@ def profile(request):
 
         if form.is_valid():
             form.save()
-            messages.success(request, "Updated successfully!")
+            messages.success(request, 'Updated successfully!')
             return redirect('profile')
         
     form = ProfileForm(instance=request.user)
@@ -141,10 +141,10 @@ def change_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
-            messages.success(request, "Changed successfully!")
+            messages.success(request, 'Changed successfully!')
             return redirect('profile')
         else:
-            messages.error(request, "Please correct the error.")
+            messages.error(request, 'Please correct the error.')
 
     form = PasswordChangeForm(user=request.user)
 
@@ -168,25 +168,25 @@ def forget_password(request):
             except User.DoesNotExist:
                 messages.error(
                     request,
-                    "No user is associated with this email address.",
+                    'No user is associated with this email address.',
                 )
             except User.MultipleObjectsReturned:
                 messages.error(
                     request,
-                    "Multiple accounts found with this email.",
+                    'Multiple accounts found with this email.',
                 )
             else:
-                subject = "Password Reset Requested"
-                email_template_name = "account/password_reset_email.html"
+                subject = 'Password Reset Requested'
+                email_template_name = 'account/password_reset_email.html'
 
                 context = {
-                    "email": user.email,
-                    "domain": request.get_host(),
-                    "site_name": "Your Site",
-                    "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                    "user": user,
-                    "token": default_token_generator.make_token(user),
-                    "protocol": "http",
+                    'email': user.email,
+                    'domain': request.get_host(),
+                    'site_name': 'Your Site',
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'user': user,
+                    'token': default_token_generator.make_token(user),
+                    'protocol': 'http',
                 }
 
                 email_content = render_to_string(
@@ -197,11 +197,11 @@ def forget_password(request):
                 send_mail(
                     subject,
                     email_content,
-                    "noreply@yoursite.com",
+                    'noreply@yoursite.com',
                     [user.email]
                 )
                 
-                messages.success(request, "Password reset email has been sent!")
+                messages.success(request, 'Password reset email has been sent!')
                 
                 return redirect('login')
 
@@ -232,7 +232,7 @@ def reset_password(request, uidb64, token):
             'form': form,
         })
     else:
-        messages.error(request, "Link is invalid or has expired.")
+        messages.error(request, 'Link is invalid or has expired.')
         return redirect('password_reset')
 
 

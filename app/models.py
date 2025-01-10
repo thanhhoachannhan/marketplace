@@ -15,20 +15,20 @@ from django.conf import settings
 class UserGroup(models.Model):
 
     class Meta:
-        verbose_name = _('group')
-        verbose_name_plural = _('groups')
+        verbose_name = _('GROUP')
+        verbose_name_plural = _('USER_GROUP')
 
     objects = GroupManager()
 
     name = models.CharField(
-        verbose_name = _('name'),
+        verbose_name = _('NAME'),
         max_length = 150,
         unique = True,
     )
 
     permissions = models.ManyToManyField(
         to = Permission,
-        verbose_name = _('permissions'),
+        verbose_name = _('PERMISSIONS'),
         blank = True,
     )
 
@@ -42,8 +42,8 @@ class UserGroup(models.Model):
 class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
-        verbose_name = _('user')
-        verbose_name_plural = _('users')
+        verbose_name = _('USER')
+        verbose_name_plural = _('USERS')
 
     objects = UserManager()
 
@@ -52,7 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # REQUIRED_FIELDS = ['email']
 
     username = models.CharField(
-        verbose_name = _('username'),
+        verbose_name = _('USERNAME'),
         max_length = 100,
         unique = True,
         validators = [
@@ -61,55 +61,55 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     fullname = models.CharField(
-        verbose_name = _('fullname'),
+        verbose_name = _('FULLNAME'),
         max_length = 100,
         blank = True,
         null = True,
     )
 
     email = models.EmailField(
-        verbose_name = _('email'),
+        verbose_name = _('EMAIL'),
         unique = True,
         blank = True,
         null = True,
     )
 
     avatar = models.ImageField(
-        verbose_name = _('avatar'),
+        verbose_name = _('AVATAR'),
         upload_to = 'avatar',
         blank = True,
         null = True,
     )
 
     address = models.TextField(
-        verbose_name = _('address'),
+        verbose_name = _('ADDRESS'),
         blank = True,
         null = True,
     )
 
     is_staff = models.BooleanField(
-        verbose_name = _('is_staff'),
+        verbose_name = _('IS_STAFF'),
         default = False,
     )
 
     is_active = models.BooleanField(
-        verbose_name = _('is_active'),
+        verbose_name = _('IS_ACTIVE'),
         default = True,
     )
 
     date_joined = models.DateTimeField(
-        verbose_name = _('date_joined'),
+        verbose_name = _('DATE_JOINED'),
         default = timezone.now,
     )
 
     groups = models.ManyToManyField(
         to = UserGroup,
-        verbose_name = _('groups'),
+        verbose_name = _('GROUPS'),
         blank = True,
     )
 
     is_vendor = models.BooleanField(
-        verbose_name = _('is_vendor'),
+        verbose_name = _('IS_VENDOR'),
         default = False,
     )
 
@@ -128,7 +128,7 @@ class Vendor(models.Model):
     )
 
     store_name = models.CharField(
-        verbose_name = _('store_name'),
+        verbose_name = _('STORE_NAME'),
         max_length = 255,
     )
 
@@ -148,11 +148,11 @@ class Vendor(models.Model):
 class Category(models.Model):
 
     class Meta:
-        verbose_name = _('category')
-        verbose_name_plural = _('categories')
+        verbose_name = _('CATEGORY')
+        verbose_name_plural = _('CATEGORIES')
 
     name = models.CharField(
-        verbose_name = 'category_name',
+        verbose_name = _('NAME'),
         max_length = 255,
     )
 
@@ -166,7 +166,7 @@ class Category(models.Model):
 
     def __str__(self):
         parent_name = self.parent.name if self.parent else 'None'
-        return f"{self.name} (Parent: {parent_name})"
+        return f'{self.name} (Parent: {parent_name})'
 
 
 class Product(models.Model):
@@ -186,12 +186,12 @@ class Product(models.Model):
     )
 
     name = models.CharField(
-        verbose_name = 'product_name',
+        verbose_name = _('NAME'),
         max_length = 255,
     )
 
     description = models.TextField(
-        verbose_name = 'description',
+        verbose_name = _('DESCRIPTION'),
         blank = True,
         null = True,
     )
@@ -241,7 +241,7 @@ class AttributeValue(models.Model):
     attribute = models.ForeignKey(
         to = Attribute,
         on_delete = models.CASCADE,
-        related_name = "values",
+        related_name = 'values',
     )
 
     value = models.CharField(
@@ -249,7 +249,7 @@ class AttributeValue(models.Model):
     )
 
     def __str__(self):
-        return f"{self.attribute.name}: {self.value}"
+        return f'{self.attribute.name}: {self.value}'
 
 
 class ProductImage(models.Model):
@@ -290,7 +290,7 @@ class ProductImage(models.Model):
         ordering = ['rank', 'created_at']
 
     def __str__(self):
-        return f"Image for {self.product.name} (Rank: {self.rank})"
+        return f'Image for {self.product.name} (Rank: {self.rank})'
 
     def clean(self):
         if self.is_default:
@@ -310,7 +310,7 @@ class ProductVariant(models.Model):
 
     attribute_value = models.ForeignKey(
         to = AttributeValue,
-        related_name = "variants",
+        related_name = 'variants',
         on_delete = models.CASCADE,
     )
 
@@ -319,7 +319,7 @@ class ProductVariant(models.Model):
         on_delete = models.SET_NULL,
         blank = True,
         null = True,
-        related_name = "variant_images",
+        related_name = 'variant_images',
         verbose_name = _('variant image'),
     )
 
@@ -337,7 +337,7 @@ class ProductVariant(models.Model):
         )
     
     def get_image(self):
-        """Return the image for the variant or the default product image."""
+        '''Return the image for the variant or the default product image.'''
         if self.image:
             return self.image.image.url
         default_image = self.product.images.filter(is_default=True).first()
@@ -400,7 +400,7 @@ class CartItem(models.Model):
     def clean(self):
         if self.cart.vendor != self.product.vendor:
             raise ValidationError(
-                "The product's vendor does not match the cart's vendor."
+                'The product\'s vendor does not match the cart\'s vendor.'
             )
 
     def save(self, *args, **kwargs):
@@ -454,9 +454,9 @@ class Order(models.Model):
     )
 
     def calculate_total_price(self):
-        """
+        '''
         Recalculate the total price of the order based on its items.
-        """
+        '''
         try:
             if self.pk is None:
                 return
@@ -514,9 +514,9 @@ class OrderItem(models.Model):
         return f'OrderItem: {self.product} ( Variant: {self.variant} )'
 
     def calculate_price(self):
-        """
+        '''
         Calculate the price for this item, considering variant modifiers.
-        """
+        '''
         base_price = self.product.price
         variant_modifier = self.variant.price_modifier if self.variant else 0
         self.price = base_price + variant_modifier
@@ -578,7 +578,7 @@ class Voucher(models.Model):
         )
 
     def __str__(self):
-        return f"Voucher {self.code} - ${self.discount_amount}"
+        return f'Voucher {self.code} - ${self.discount_amount}'
 
 
 class Payment(models.Model):
@@ -616,9 +616,9 @@ class Payment(models.Model):
     )
 
     def calculate_payment_amount(self):
-        """
+        '''
         Calculate the payment amount after applying any valid vouchers.
-        """
+        '''
         try:
             if self.pk is None:
                 return
@@ -651,13 +651,13 @@ class VoucherUsage(models.Model):
     voucher = models.ForeignKey(
         to = Voucher,
         on_delete = models.CASCADE,
-        related_name = "voucherusage_set",
+        related_name = 'voucherusage_set',
     )
 
     payment = models.ForeignKey(
         to = Payment,
         on_delete = models.CASCADE,
-        related_name = "voucherusage_set",
+        related_name = 'voucherusage_set',
     )
 
     applied_amount = models.DecimalField(
@@ -672,7 +672,7 @@ class VoucherUsage(models.Model):
 
     def clean(self):
         if self.applied_amount < 0:
-            raise ValidationError("Applied amount cannot be negative.")
+            raise ValidationError('Applied amount cannot be negative.')
 
     def save(self, *args, **kwargs):
         self.clean()

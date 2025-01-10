@@ -20,7 +20,7 @@ class LoginForm(AuthenticationForm):
     }
     
     def confirm_login_allowed(self, user):
-        logger.info(f"Login failed for inactive user: {user.username}")
+        logger.info(f'Login failed for inactive user: {user.username}')
         if not user.is_active:
             raise exceptions.ValidationError(
                 message = self.error_messages['inactive'],
@@ -36,20 +36,20 @@ class RegisterForm(forms.ModelForm):
 
     password = forms.CharField(
         widget = forms.PasswordInput,
-        label = "Password",
+        label = 'Password',
     )
     confirm_password = forms.CharField(
         widget = forms.PasswordInput,
-        label = "Confirm Password",
+        label = 'Confirm Password',
     )
 
     def clean(self):
         cleaned_data = super().clean()
-        password = cleaned_data.get("password")
-        confirm_password = cleaned_data.get("confirm_password")
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
 
         if password != confirm_password:
-            raise forms.ValidationError("Passwords do not match.")
+            raise forms.ValidationError('Passwords do not match.')
         return cleaned_data
 
 
@@ -72,22 +72,22 @@ class SetNewPasswordForm(forms.Form):
 
     new_password = forms.CharField(
         widget = forms.PasswordInput,
-        label = "New Password",
+        label = 'New Password',
     )
 
     confirm_password = forms.CharField(
         widget = forms.PasswordInput,
-        label = "Confirm Password",
+        label = 'Confirm Password',
     )
 
     def clean(self):
         cleaned_data = super().clean()
         
-        new_password = cleaned_data.get("new_password")
-        confirm_password = cleaned_data.get("confirm_password")
+        new_password = cleaned_data.get('new_password')
+        confirm_password = cleaned_data.get('confirm_password')
 
         if new_password != confirm_password:
-            raise forms.ValidationError("Passwords do not match.")
+            raise forms.ValidationError('Passwords do not match.')
         
         return cleaned_data
     

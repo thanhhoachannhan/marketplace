@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 try:
                     response = requests.get(avatar_url)
                     user.avatar.save(
-                        f"{faker.uuid4()}.jpg",
+                        f'{faker.uuid4()}.jpg',
                         ContentFile(response.content),
                         save=True,
                     )
@@ -139,8 +139,8 @@ class Command(BaseCommand):
 
             if not vendors:
                 raise ValueError(
-                    "No vendors were created. "
-                    "Ensure some users are vendors."
+                    'No vendors were created. '
+                    'Ensure some users are vendors.'
                 )
 
             products = []
@@ -193,7 +193,7 @@ class Command(BaseCommand):
                     try:
                         response = requests.get(product_image_url)
                         image.file.save(
-                            f"{faker.uuid4()}.jpg",
+                            f'{faker.uuid4()}.jpg',
                             ContentFile(response.content),
                             save=True,
                         )
@@ -437,7 +437,7 @@ class Command(BaseCommand):
 
                 PaymentMethod.objects.create(
                     name = method,
-                    description = f"Payment method {method} description",
+                    description = f'Payment method {method} description',
                 )
 
             self.stdout.write(
@@ -558,7 +558,7 @@ class Command(BaseCommand):
 
                 self.stdout.write(
                     self.style.SUCCESS(
-                        "Mock data created successfully!"
+                        'Mock data created successfully!'
                     )
                 )
         

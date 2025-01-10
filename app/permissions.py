@@ -14,9 +14,9 @@ def login_required(view_func):
         if not request.user.is_authenticated:
             messages.warning(
                 request,
-                "You need to log in to access this page."
+                'You need to log in to access this page.'
             )
-            return redirect(f"{reverse('login')}?next={request.path}")
+            return redirect(f'{reverse('login')}?next={request.path}')
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 
@@ -67,7 +67,7 @@ def own_order_required(view_func):
             order = get_object_or_404(Order, id=order_id)
             if order.user != request.user:
                 return HttpResponseForbidden(
-                    "You can only view your own orders."
+                    'You can only view your own orders.'
                 )
 
         return view_func(request, *args, **kwargs)
@@ -76,7 +76,7 @@ def own_order_required(view_func):
 
 
 def multi_ownership_required(ownership_rules):
-    """
+    '''
     ownership_rules:
         A dictionary mapping object_id_field -> (Model, user_field)
 
@@ -85,7 +85,7 @@ def multi_ownership_required(ownership_rules):
             'order_id': (Order, 'user'),
             'payment_id': (Payment, 'user')
         }
-    """
+    '''
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
@@ -95,8 +95,8 @@ def multi_ownership_required(ownership_rules):
                     obj = get_object_or_404(model, id=object_id)
                     if getattr(obj, user_field) != request.user:
                         return HttpResponseForbidden(
-                            f"You do not have access to {model.__name__} "
-                            f"with ID {object_id}."
+                            f'You do not have access to {model.__name__} '
+                            f'with ID {object_id}.'
                         )
             return view_func(request, *args, **kwargs)
         return _wrapped_view

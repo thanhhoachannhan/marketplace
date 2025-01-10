@@ -65,7 +65,7 @@ class ProductVariantInline(admin.TabularInline):
                 ),
                 obj.image.file.url,
             )
-        return "No Image"
+        return 'No Image'
 
     product_image_preview.short_description = 'Image'
 
@@ -103,7 +103,7 @@ class ProductImageInline(admin.TabularInline):
                 ),
                 obj.file.url,
             )
-        return "No Image"
+        return 'No Image'
 
     product_image_preview.short_description = 'File'
 
@@ -189,13 +189,13 @@ class UserAdmin(UserAdmin):
                 ),
                 obj.avatar.url,
             )
-        return "No Avatar"
+        return 'No Avatar'
     
     def view_vendor(self, obj):
         if obj.is_vendor:
             vendor = Vendor.objects.filter(user=obj).first()
             if vendor:
-                url = f"/admin/app/vendor/{vendor.id}/change/"
+                url = f'/admin/app/vendor/{vendor.id}/change/'
                 return mark_safe(f'<a href="{url}">{vendor.store_name}</a>')
         return None
     
@@ -278,7 +278,7 @@ class ProductAdmin(admin.ModelAdmin):
                 ),
                 obj.get_default_image().file.url,
             )
-        return "No Default Image"
+        return 'No Default Image'
     
     default_image_preview.short_description = 'Default Image'
 
@@ -301,7 +301,7 @@ class ProductVariantAdmin(admin.ModelAdmin):
                 ),
                 obj.image.file.url,
             )
-        return "No Image"
+        return 'No Image'
     
     product_image_preview.short_description = 'Image'
 

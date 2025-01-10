@@ -33,19 +33,19 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticfiles')]
 #-------------------------------------------------
 # Languages
 #-------------------------------------------------
-# USE_I18N = True
-# LANGUAGE_CODE = 'en'
-# LOCALE_PATHS = [BASE_DIR / 'locale/',]
-# LANGUAGES = (
-#     ('en', _('English')),
-#     ('vi', _('Vietnamese')),
-# )
-# if not os.path.exists(BASE_DIR / 'locale'): os.mkdir('locale')
-# for lang in LANGUAGES:
-#     if not os.path.exists(BASE_DIR / 'locale' / lang[0]):
-#         os.mkdir(BASE_DIR / 'locale' / lang[0])
-#     if not os.path.exists(BASE_DIR / 'locale' / lang[0] / 'LC_MESSAGES'):
-#         os.mkdir(BASE_DIR / 'locale' / lang[0] / 'LC_MESSAGES')
+USE_I18N = True
+LANGUAGE_CODE = 'en'
+LOCALE_PATHS = [BASE_DIR / 'locale/',]
+LANGUAGES = (
+    ('en', _('English')),
+    ('vi', _('Vietnamese')),
+)
+if not os.path.exists(BASE_DIR / 'locale'): os.mkdir('locale')
+for lang in LANGUAGES:
+    if not os.path.exists(BASE_DIR / 'locale' / lang[0]):
+        os.mkdir(BASE_DIR / 'locale' / lang[0])
+    if not os.path.exists(BASE_DIR / 'locale' / lang[0] / 'LC_MESSAGES'):
+        os.mkdir(BASE_DIR / 'locale' / lang[0] / 'LC_MESSAGES')
 
 #-------------------------------------------------
 # Apps Settings
@@ -68,7 +68,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
 
     # Multiple languages
-    # 'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -76,7 +76,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    # Fix: Cannot query "None(User)": Must be "Group" instance.
+    # Fix: Cannot query 'None(User)': Must be 'Group' instance.
     'app.middleware.BlockNormalUserMiddleware',
 ]
 
@@ -131,14 +131,14 @@ EMAIL_FILE_PATH = BASE_DIR / 'emails'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {message}",
-            "style": "{",
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
         },
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
         },
     },
     'handlers': {
