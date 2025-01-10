@@ -139,13 +139,13 @@ class Vendor(models.Model):
     )
 
     store_description = models.TextField(
-        verbose_name = _('DESCRIPTION')
+        verbose_name = _('DESCRIPTION'),
         blank = True,
         null = True,
     )
 
     is_approved = models.BooleanField(
-        verbose_name = _('IS_APPROVED')
+        verbose_name = _('IS_APPROVED'),
         default = False
     )
 
