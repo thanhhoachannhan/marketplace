@@ -165,7 +165,7 @@ class Category(models.Model):
         on_delete = models.CASCADE, 
         blank = True, 
         null = True, 
-        related_name = 'children',
+        related_name = 'category_set',
     )
 
     def __str__(self):
@@ -331,7 +331,7 @@ class ProductVariant(models.Model):
         on_delete = models.SET_NULL,
         blank = True,
         null = True,
-        # related_name = 'variant_images', //?
+        related_name = 'productvariant_set',
         verbose_name = _('variant image'),
     )
 
@@ -361,13 +361,13 @@ class Cart(models.Model):
     user = models.ForeignKey(
         to = User,
         on_delete = models.CASCADE,
-        related_name = 'carts',
+        related_name = 'cart_set',
     )
 
     vendor = models.ForeignKey(
         to = Vendor,
         on_delete = models.CASCADE,
-        related_name = 'carts',
+        related_name = 'cart_set',
     )
 
     created_at = models.DateTimeField(
@@ -387,7 +387,7 @@ class CartItem(models.Model):
     cart = models.ForeignKey(
         to = Cart,
         on_delete = models.CASCADE,
-        related_name = 'items',
+        related_name = 'cartitem_set',
     )
 
     product = models.ForeignKey(
@@ -425,13 +425,13 @@ class Order(models.Model):
     user = models.ForeignKey(
         to = User,
         on_delete = models.CASCADE,
-        related_name = 'orders',
+        related_name = 'order_set',
     )
 
     vendor = models.ForeignKey(
         to = Vendor,
         on_delete = models.CASCADE,
-        related_name = 'orders',
+        related_name = 'order_set',
     )
 
     total_price = models.DecimalField(
@@ -598,7 +598,7 @@ class Payment(models.Model):
     order = models.ForeignKey(
         to = Order,
         on_delete = models.CASCADE,
-        related_name = 'payments',
+        related_name = 'payment_set',
     )
     
     payment_method = models.ForeignKey(
