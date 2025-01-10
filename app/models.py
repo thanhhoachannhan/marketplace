@@ -165,7 +165,7 @@ class Category(models.Model):
         on_delete = models.CASCADE, 
         blank = True, 
         null = True, 
-        related_name = 'category_set',
+        # related_name = 'category_set',
     )
 
     def __str__(self):
@@ -186,7 +186,7 @@ class Product(models.Model):
     vendor = models.ForeignKey(
         to = Vendor,
         on_delete = models.CASCADE,
-        related_name = 'product_set',
+        # related_name = 'product_set',
     )
 
     category = models.ForeignKey(
@@ -194,7 +194,7 @@ class Product(models.Model):
         on_delete = models.SET_NULL,
         blank = True,
         null = True,
-        related_name = 'product_set',
+        # related_name = 'product_set',
     )
 
     name = models.CharField(
@@ -253,7 +253,7 @@ class AttributeValue(models.Model):
     attribute = models.ForeignKey(
         to = Attribute,
         on_delete = models.CASCADE,
-        related_name = 'attributevalue_set',
+        # related_name = 'attributevalue_set',
     )
 
     value = models.CharField(
@@ -269,7 +269,7 @@ class ProductImage(models.Model):
     product = models.ForeignKey(
         to = Product,
         on_delete = models.CASCADE,
-        related_name = 'productimage_set',
+        # related_name = 'productimage_set',
         verbose_name = _('product'),
     )
 
@@ -317,12 +317,12 @@ class ProductVariant(models.Model):
     product = models.ForeignKey(
         to = Product,
         on_delete = models.CASCADE,
-        related_name = 'productvariant_set',
+        # related_name = 'productvariant_set',
     )
 
     attribute_value = models.ForeignKey(
         to = AttributeValue,
-        related_name = 'productvariant_set',
+        # related_name = 'productvariant_set',
         on_delete = models.CASCADE,
     )
 
@@ -331,7 +331,7 @@ class ProductVariant(models.Model):
         on_delete = models.SET_NULL,
         blank = True,
         null = True,
-        related_name = 'productvariant_set',
+        # related_name = 'productvariant_set',
         verbose_name = _('variant image'),
     )
 
@@ -361,13 +361,13 @@ class Cart(models.Model):
     user = models.ForeignKey(
         to = User,
         on_delete = models.CASCADE,
-        related_name = 'cart_set',
+        # related_name = 'cart_set',
     )
 
     vendor = models.ForeignKey(
         to = Vendor,
         on_delete = models.CASCADE,
-        related_name = 'cart_set',
+        # related_name = 'cart_set',
     )
 
     created_at = models.DateTimeField(
@@ -387,7 +387,7 @@ class CartItem(models.Model):
     cart = models.ForeignKey(
         to = Cart,
         on_delete = models.CASCADE,
-        related_name = 'cartitem_set',
+        # related_name = 'cartitem_set',
     )
 
     product = models.ForeignKey(
@@ -425,13 +425,13 @@ class Order(models.Model):
     user = models.ForeignKey(
         to = User,
         on_delete = models.CASCADE,
-        related_name = 'order_set',
+        # related_name = 'order_set',
     )
 
     vendor = models.ForeignKey(
         to = Vendor,
         on_delete = models.CASCADE,
-        related_name = 'order_set',
+        # related_name = 'order_set',
     )
 
     total_price = models.DecimalField(
@@ -496,7 +496,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(
         to=Order,
         on_delete=models.CASCADE,
-        related_name='orderitem_set',
+        # related_name='orderitem_set',
     )
     
     product = models.ForeignKey(
@@ -598,7 +598,7 @@ class Payment(models.Model):
     order = models.ForeignKey(
         to = Order,
         on_delete = models.CASCADE,
-        related_name = 'payment_set',
+        # related_name = 'payment_set',
     )
     
     payment_method = models.ForeignKey(
@@ -663,13 +663,13 @@ class VoucherUsage(models.Model):
     voucher = models.ForeignKey(
         to = Voucher,
         on_delete = models.CASCADE,
-        related_name = 'voucherusage_set',
+        # related_name = 'voucherusage_set',
     )
 
     payment = models.ForeignKey(
         to = Payment,
         on_delete = models.CASCADE,
-        related_name = 'voucherusage_set',
+        # related_name = 'voucherusage_set',
     )
 
     applied_amount = models.DecimalField(
