@@ -328,8 +328,10 @@ class ProductImage(models.Model):
         return f'Image for {self.product.name} (Rank: {self.rank})'
 
     def clean(self):
+        '''
+            Make sure only one default image for product.
+        '''
         if self.is_default:
-            # Đảm bảo chỉ có một ảnh mặc định cho mỗi sản phẩm
             ProductImage.objects.filter(
                 product=self.product, is_default=True
             ).exclude(id=self.id).update(is_default=False)
@@ -372,7 +374,9 @@ class ProductVariant(models.Model):
         )
     
     def get_image(self):
-        '''Return the image for the variant or the default product image.'''
+        '''
+            Return the image for the variant or the default product image.
+        '''
         if self.image:
             return self.image.image.url
         default_image = self.product.images.filter(is_default=True).first()
