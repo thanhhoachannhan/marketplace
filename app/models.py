@@ -122,8 +122,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Vendor(models.Model):
 
+    class Meta:
+        verbose_name = _('VENDOR')
+        verbose_name_plural = _('VENDORS')
+
     user = models.ForeignKey(
         to = User,
+        verbose_name = _('USER'),
         on_delete = models.CASCADE,
         # related_name = 'vendor_set',
     )
@@ -134,11 +139,13 @@ class Vendor(models.Model):
     )
 
     store_description = models.TextField(
+        verbose_name = _('DESCRIPTION')
         blank = True,
         null = True,
     )
 
     is_approved = models.BooleanField(
+        verbose_name = _('IS_APPROVED')
         default = False
     )
 
@@ -162,7 +169,8 @@ class Category(models.Model):
     )
 
     parent = models.ForeignKey(
-        to = 'self', 
+        to = 'self',
+        verbose_name = _('PARENT'),
         on_delete = models.CASCADE, 
         blank = True, 
         null = True, 
@@ -183,6 +191,10 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+
+    class Meta:
+        verbose_name = _('PRODUCT')
+        verbose_name_plural = _('PRODUCTS')
 
     vendor = models.ForeignKey(
         to = Vendor,
