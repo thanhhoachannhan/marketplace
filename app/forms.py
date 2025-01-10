@@ -8,7 +8,7 @@ from django.core import exceptions
 from django.utils.translation import gettext_lazy as _
 
 
-logger = logging.getLogger('django')
+logger = logging.getLogger('app')
 
 User = get_user_model()
 

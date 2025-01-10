@@ -17,8 +17,8 @@ clean:
 	rm -fr emails
 	rm -fr uploads
 	rm -fr locale
+	rm -fr logs
 	rm -fr db.sqlite3
-	rm log.log
 mock:
 	python ${MANAGE_FILE}.py mock_data
 git:

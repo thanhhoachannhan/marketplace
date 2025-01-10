@@ -128,6 +128,8 @@ EMAIL_FILE_PATH = BASE_DIR / 'emails'
 #-------------------------------------------------
 # Logging
 #-------------------------------------------------
+LOG_FOLDER = 'logs'
+if not os.path.exists(BASE_DIR / LOG_FOLDER): os.mkdir(LOG_FOLDER)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -147,16 +149,48 @@ LOGGING = {
             'formatter': 'simple'
         },
         'file': {
-            'level': 'DEBUG',
+            # 'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'log.log',
+            'filename': os.path.join(BASE_DIR / LOG_FOLDER, 'log.log'),
+            'formatter': 'verbose'
+        },
+        'file_info_log': {
+            # 'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR / LOG_FOLDER, 'info.log'),
+            'formatter': 'verbose'
+        },
+        'file_request_log': {
+            # 'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR / LOG_FOLDER, 'requests.log'),
+            'formatter': 'verbose'
+        },
+        'file_app_log': {
+            # 'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR / LOG_FOLDER, 'app.log'),
             'formatter': 'verbose'
         },
     },
     'loggers': {
-        '': {
+        # '': {
+        #     'level': 'DEBUG',
+        #     'handlers': ['console', 'file'],
+        # },
+        'django': {
+            'level': 'INFO',
+            'handlers': ['file_info_log'],
+            'propagate': False,
+        },
+        'django.server': {
             'level': 'DEBUG',
-            'handlers': ['console', 'file'],
+            'handlers': ['file_request_log'],
+            'propagate': False,
+        },
+        'app': {
+            'level': 'DEBUG',
+            'handlers': ['file_app_log'],
         },
     },
 }

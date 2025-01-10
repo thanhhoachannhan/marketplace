@@ -9,7 +9,7 @@ from django.contrib.auth.signals import (
 from django.dispatch import receiver
 
 
-logger = logging.getLogger('django')
+logger = logging.getLogger('app')
 
 @receiver(user_logged_in)
 def post_login(sender, request, user, **kwargs):

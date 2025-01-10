@@ -3,5 +3,5 @@ emails/
 migrations/
 uploads/
 locale/
-log.log
+logs/
 db.sqlite3
