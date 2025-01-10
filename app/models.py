@@ -279,6 +279,10 @@ class Attribute(models.Model):
 
 class AttributeValue(models.Model):
 
+    class Meta:
+        verbose_name = _('ATTRIBUTE_VALUE')
+        verbose_name_plural = _('ATTRIBUTE_VALUES')
+
     attribute = models.ForeignKey(
         verbose_name = _('ATTRIBUTE'),
         to = Attribute,
@@ -336,8 +340,11 @@ class ProductImage(models.Model):
     )
 
     def __str__(self):
-        return ('Image for {} (Rank: {})').format(
+        return ('{} ({}:{} - {}: {})').format(
+            _('IMAGE'),
+            _('PRODUCT'),
             self.product.name,
+            _('RANK'),
             self.rank,
         )
 
@@ -353,34 +360,44 @@ class ProductImage(models.Model):
 
 class ProductVariant(models.Model):
 
+    class Meta:
+        verbose_name = _('PRODUCT_VARIANT')
+        verbose_name_plural = _('PRODUCT_VARIANTS')
+
     product = models.ForeignKey(
         to = Product,
+        verbose_name = _('PRODUCT'),
         on_delete = models.CASCADE,
         # related_name = 'productvariant_set',
     )
 
     attribute_value = models.ForeignKey(
         to = AttributeValue,
+        verbose_name = _('ATTRIBUTE_VALUE'),
         # related_name = 'productvariant_set',
         on_delete = models.CASCADE,
     )
 
     image = models.ForeignKey(
         to = ProductImage,
+        verbose_name = _('IMAGE'),
         on_delete = models.SET_NULL,
         blank = True,
         null = True,
         # related_name = 'productvariant_set',
-        verbose_name = _('variant image'),
     )
 
     price_modifier = models.DecimalField(
+        verbose_name = _('PRICE_MODIFIER'),
         max_digits = 10,
         decimal_places = 2,
         default = 0,
     )
 
     def __str__(self):
+        return ('').format(
+
+        )
         return (
             f'Variant: {self.product.name} '
             f'( {self.attribute_value.attribute.name} : '
