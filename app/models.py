@@ -198,12 +198,14 @@ class Product(models.Model):
 
     vendor = models.ForeignKey(
         to = Vendor,
+        verbose_name = _('VENDOR'),
         on_delete = models.CASCADE,
         # related_name = 'product_set',
     )
 
     category = models.ForeignKey(
         to = Category,
+        verbose_name = _('CATEGORY'),
         on_delete = models.SET_NULL,
         blank = True,
         null = True,
@@ -222,27 +224,35 @@ class Product(models.Model):
     )
 
     price = models.DecimalField(
+        verbose_name = _('PRICE'),
         max_digits = 10,
         decimal_places = 2,
     )
 
     stock = models.PositiveIntegerField(
+        verbose_name = _('STOCK'),
         default = 0,
     )
 
     is_active = models.BooleanField(
+        verbose_name = _('IS_ACTIVE'),
         default = True,
     )
 
     created_at = models.DateTimeField(
+        verbose_name = _('CREATED_AT'),
         auto_now_add = True,
     )
     updated_at = models.DateTimeField(
+        verbose_name = _('UPDATED_AT'),
         auto_now = True,
     )
 
     def __str__(self):
-        return f'Product: {self.name}'
+        return ('{}: {}').format(
+            _('PRODUCT'),
+            self.name,
+        )
 
     def get_default_image(self):
         default_image = self.productimage_set.filter(
