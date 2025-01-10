@@ -6,16 +6,7 @@ from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.shortcuts import HttpResponse, render
 
-from app.views import (
-    index,
-    login, logout,
-    register,
-    profile,
-    change_password, forget_password,
-    reset_password,
-
-    api_order_detail,
-)
+from app.views import *
 
 
 urlpatterns = [
