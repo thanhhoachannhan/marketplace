@@ -740,19 +740,26 @@ class Voucher(models.Model):
 
 class Payment(models.Model):
 
+    class Meta:
+        verbose_name = _('PAYMENT')
+        verbose_name_plural = _('PAYMENTS')
+
     order = models.ForeignKey(
         to = Order,
+        verbose_name = _('ORDER'),
         on_delete = models.CASCADE,
         # related_name = 'payment_set',
     )
     
     payment_method = models.ForeignKey(
         to = PaymentMethod,
+        verbose_name = _('PAYMENT METHOD'),
         on_delete = models.CASCADE,
         # related_name = 'payment_set',
     )
 
     amount = models.DecimalField(
+        verbose_name = _('AMOUNT'),
         max_digits = 10,
         decimal_places = 2,
         blank = True,
@@ -760,10 +767,12 @@ class Payment(models.Model):
     )
 
     payment_date = models.DateTimeField(
+        verbose_name = _('PAYMENT DATE'),
         auto_now_add = True,
     )
 
     status = models.CharField(
+        verbose_name = _('STATUS'),
         max_length = 20,
         choices = [
             ('Pending', 'Pending'),
@@ -773,6 +782,14 @@ class Payment(models.Model):
         default = 'Pending',
     )
 
+    def __str__(self):
+        return ('{}: #{} [${} - {}]').format(
+            _('PAYMENT FOR ORDER'),
+            self.order.id,
+            self.amount,
+            self.payment_method,
+        )
+    
     def calculate_payment_amount(self):
         """
         Calculate the payment amount after applying any valid vouchers.
@@ -797,42 +814,51 @@ class Payment(models.Model):
             print(ex)
 
 
-    def __str__(self):
-        return (
-            f'Payment for Order #{self.order.id} '
-            f'- ${self.amount} - {self.payment_method}'
-        )
-
-
 class VoucherUsage(models.Model):
+
+    class Meta:
+        verbose_name = _('VOUCHER USAGE')
+        verbose_name_plural = _('VOUCHER USAGES')
 
     voucher = models.ForeignKey(
         to = Voucher,
+        verbose_name = _('VOUCHER'),
         on_delete = models.CASCADE,
         # related_name = 'voucherusage_set',
     )
 
     payment = models.ForeignKey(
         to = Payment,
+        verbose_name = _('PAYMENT'),
         on_delete = models.CASCADE,
         # related_name = 'voucherusage_set',
     )
 
     applied_amount = models.DecimalField(
+        verbose_name = _('APPLIED AMOUNT'),
         max_digits = 10,
         decimal_places = 2,
         default = 0,
     )
 
     created_at = models.DateTimeField(
+        verbose_name = _('CREATED AT'),
         auto_now_add = True,
     )
 
+    def __str__(self):
+        return ('{}: [{}: {} - {}: {}]').format(
+            _('VOUCHER USAGE'),
+            _('VOUCHER'),
+            self.voucher,
+            _('PAYMENT'),
+            self.payment,
+        )
+
     def clean(self):
         if self.applied_amount < 0:
-            raise ValidationError('Applied amount cannot be negative.')
+            raise ValidationError(_('APPLIED AMOUNT CANNOT BE NEGATIVE'))
 
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
-
