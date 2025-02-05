@@ -4,7 +4,6 @@ import random, requests
 from django.core.management.base import BaseCommand
 from django.core.files.base import ContentFile
 from django.db import transaction
-from django.utils.translation import gettext_lazy as _
 
 from faker import Faker
 
@@ -18,7 +17,7 @@ PASSWORD = 'test'
 faker = Faker()
 
 class Command(BaseCommand):
-    help = _('CREATE MOCK DATA FOR TESTING')
+    help = 'Create mock data for testing'
 
     def handle(self, *args, **kwargs):
 
@@ -68,7 +67,7 @@ class Command(BaseCommand):
                     )
 
             self.stdout.write(
-                self.style.SUCCESS(_('USER & VENDOR CREATED SUCCESSFULLY!')),
+                self.style.SUCCESS('User & Vendor created successfully!'),
             )
         
         def random_category_tree():
@@ -139,10 +138,10 @@ class Command(BaseCommand):
             categories = Category.objects.all()
 
             if not vendors:
-                raise ValueError(_(
-                    'NO VENDORS WERE CREATED. '
-                    'ENSURE SOME USERS ARE VENDORS.'
-                ))
+                raise ValueError(
+                    'No vendors were created. '
+                    'Ensure some users are vendors.'
+                )
 
             products = []
 
@@ -558,7 +557,9 @@ class Command(BaseCommand):
                 random_voucher_usage()
 
                 self.stdout.write(
-                    self.style.SUCCESS(_('MOCK DATA CREATED SUCESSFULLY!'))
+                    self.style.SUCCESS(
+                        'Mock data created successfully!'
+                    )
                 )
         
         except Exception as ex:
