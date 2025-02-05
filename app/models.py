@@ -472,7 +472,7 @@ class CartItem(models.Model):
         # related_name = 'cartitem_set',
     )
 
-    variant = models.ForeignKey(
+    product_variant = models.ForeignKey(
         to = ProductVariant,
         verbose_name = _('PRODUCT VARIANT'),
         on_delete = models.SET_NULL,
@@ -487,7 +487,7 @@ class CartItem(models.Model):
     )
 
     def __str__(self):
-        return ('{}: {} ( {}: {} )').format(
+        return ('{}: {} [{}: {}]').format(
             _('CART ITEM'),
             self.product,
             _('CART'),
@@ -542,13 +542,13 @@ class Order(models.Model):
         verbose_name = _('STATUS'),
         max_length = 20,
         choices = (
-            ('Pending', 'Pending'),
-            ('Processing', 'Processing'), 
-            ('Shipped', 'Shipped'),
-            ('Delivered', 'Delivered'),
-            ('Cancelled', 'Cancelled'),
+            ('PENDING', _('PENDING')),
+            ('PROCESSING', _('PROCESSING')),
+            ('SHIPPED', _('SHIPPED')),
+            ('DELIVERED', _('DELIVERED')),
+            ('CANCELLED', _('CANCELLED')),
         ),
-        default = 'Pending',
+        default = 'PENDING',
     )
 
     created_at = models.DateTimeField(
@@ -560,6 +560,17 @@ class Order(models.Model):
         verbose_name = _('UPDATED AT'),
         auto_now = True,
     )
+
+    def __str__(self):
+        return ('{}: {} - ${} [{}: {} - {}: {}]').format(
+            _('ORDER'),
+            self.id,
+            self.total_price,
+            _('USER'),
+            self.user,
+            _('VENDOR'),
+            self.vendor,
+        )
 
     def calculate_total_price(self):
         """
@@ -580,29 +591,30 @@ class Order(models.Model):
         except Exception as ex:
             print(ex)
 
-    def __str__(self):
-        return (
-            f'Order: {self.id} - ${self.total_price} '
-            f'( User: {self.user} - Vendor: {self.vendor} )'
-        )
-
 
 class OrderItem(models.Model):
 
+    class Meta:
+        verbose_name = _('ORDER ITEM')
+        verbose_name_plural = _('ORDER ITEMS')
+
     order = models.ForeignKey(
         to=Order,
+        verbose_name = _('ORDER'),
         on_delete=models.CASCADE,
         # related_name='orderitem_set',
     )
     
     product = models.ForeignKey(
         to = Product,
+        verbose_name = _('PRODUCT'),
         on_delete = models.CASCADE,
         # related_name='orderitem_set',
     )
 
-    variant = models.ForeignKey(
+    product_variant = models.ForeignKey(
         to = ProductVariant,
+        verbose_name = _('PRODUCT VARIANT'),
         on_delete = models.SET_NULL,
         blank = True,
         null = True,
@@ -610,10 +622,12 @@ class OrderItem(models.Model):
     )
 
     quantity = models.PositiveIntegerField(
+        verbose_name = _('QUANTITY'),
         default = 1,
     )
 
     price = models.DecimalField(
+        verbose_name = _('PRICE'),
         max_digits = 10,
         decimal_places = 2,
         blank = True,
@@ -621,14 +635,23 @@ class OrderItem(models.Model):
     )
 
     def __str__(self):
-        return f'OrderItem: {self.product} ( Variant: {self.variant} )'
+        return ('{}: {} [{}: {}]').format(
+            _('ORDER ITEM'),
+            self.product,
+            _('VARIANT'),
+            self.product_variant,
+        )
 
     def calculate_price(self):
         """
         Calculate the price for this item, considering variant modifiers.
         """
         base_price = self.product.price
-        variant_modifier = self.variant.price_modifier if self.variant else 0
+
+        variant_modifier = 0
+        if self.product_variant:
+            variant_modifier = self.product_variant.price_modifier
+
         self.price = base_price + variant_modifier
 
         self.save()
@@ -636,38 +659,54 @@ class OrderItem(models.Model):
 
 class PaymentMethod(models.Model):
 
+    class Meta:
+        verbose_name = _('PAYMENT METHOD')
+        verbose_name_plural = _('PAYMENT METHODS')
+
     name = models.CharField(
+        verbose_name = _('NAME'),
         max_length = 50,
         choices = [
-            ('Credit Card', 'Credit Card'),
-            ('PayPal', 'PayPal'),
-            ('Bank Transfer', 'Bank Transfer'),
+            ('CREDIT CARD', _('CREDIT CARD')),
+            ('PAYPAL', _('PAYPAL')),
+            ('BANK TRANSFER', _('BANK TRANSFER')),
         ],
     )
 
     description = models.TextField(
+        verbose_name = _('DESCRIPTION'),
         blank = True,
         null = True,
     )
 
     def __str__(self):
-        return self.name
+        return ('{}: {}').format(
+            _('PAYMENT METHOD'),
+            self.name,
+        )
 
 
 class Voucher(models.Model):
 
+    class Meta:
+        verbose_name = _('VOUCHER')
+        verbose_name_plural = _('VOUCHERS')
+
     code = models.CharField(
+        verbose_name = _('CODE'),
         max_length = 20,
         unique = True,
     )
 
     discount_amount = models.DecimalField(
+        verbose_name = _('DISCOUNT AMOUNT'),
         max_digits = 10,
         decimal_places = 2,
     )
 
     payment_method = models.ForeignKey(
         to = PaymentMethod,
+        verbose_name = _('PAYMENT METHOD'),
         on_delete = models.SET_NULL,
         blank = True,
         null = True,
@@ -675,21 +714,28 @@ class Voucher(models.Model):
     )
 
     minimum_order_value = models.DecimalField(
+        verbose_name = _('MINIMUM ORDER VALUE'),
         max_digits = 10,
         decimal_places = 2,
         default = 0,
     )
 
-    expiry_date = models.DateTimeField()
+    expiry_date = models.DateTimeField(
+        verbose_name = _('EXPIRY DATE'),
+    )
+
+    def __str__(self):
+        return ('{}: {} - ${}').format(
+            _('VOUCHER'),
+            self.code,
+            self.discount_amount,
+        )
 
     def is_valid(self, order_total):
         return (
             self.expiry_date >= timezone.now() and
             order_total >= self.minimum_order_value
         )
-
-    def __str__(self):
-        return f'Voucher {self.code} - ${self.discount_amount}'
 
 
 class Payment(models.Model):

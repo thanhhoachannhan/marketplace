@@ -225,15 +225,15 @@ class Command(BaseCommand):
                     is_default = False,
                 )
 
-                variants = set()
+                product_variants = set()
 
                 for _ in range(random.randint(1, RECORD)):
 
                     value = random.choice(attribute_values)
 
-                    if value in variants:
+                    if value in product_variants:
                         continue
-                    variants.add(value)
+                    product_variants.add(value)
 
                     image = None
                     if product_images:
@@ -315,9 +315,9 @@ class Command(BaseCommand):
                         k = 1,
                     )[0]
 
-                    variant = None
+                    product_variant = None
                     if product.productvariant_set.exists():
-                        variant = random.sample(
+                        product_variant = random.sample(
                             population = list(product.productvariant_set.all()),
                             k = 1,
                         )[0]
@@ -327,7 +327,7 @@ class Command(BaseCommand):
                     cart_item = CartItem.objects.create(
                         cart = cart,
                         product = product,
-                        variant = variant,
+                        product_variant = product_variant,
                         quantity = quantity,
                     )
 
@@ -396,23 +396,23 @@ class Command(BaseCommand):
                         k = 1,
                     )[0]
 
-                    variant = None
+                    product_variant = None
                     if product.productvariant_set.exists():
-                        variant = random.sample(
+                        product_variant = random.sample(
                             population = list(product.productvariant_set.all()),
                             k = 1,
                         )[0]
                     
-                    if (product, variant) in order_products_added:
+                    if (product, product_variant) in order_products_added:
                         continue
-                    order_products_added.add((product, variant))
+                    order_products_added.add((product, product_variant))
 
                     quantity = random.randint(1, 10)
 
                     order_item = OrderItem.objects.create(
                         order = order,
                         product = product,
-                        variant = variant,
+                        product_variant = product_variant,
                         quantity = quantity,
                     )
 
