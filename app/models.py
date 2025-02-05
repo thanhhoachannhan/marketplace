@@ -16,7 +16,7 @@ class UserGroup(models.Model):
 
     class Meta:
         verbose_name = _('GROUP')
-        verbose_name_plural = _('USER_GROUP')
+        verbose_name_plural = _('USER GROUP')
 
     objects = GroupManager()
 
@@ -88,17 +88,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     is_staff = models.BooleanField(
-        verbose_name = _('IS_STAFF'),
+        verbose_name = _('IS STAFF'),
         default = False,
     )
 
     is_active = models.BooleanField(
-        verbose_name = _('IS_ACTIVE'),
+        verbose_name = _('IS ACTIVE'),
         default = True,
     )
 
     date_joined = models.DateTimeField(
-        verbose_name = _('DATE_JOINED'),
+        verbose_name = _('DATE JOINED'),
         default = timezone.now,
     )
 
@@ -109,7 +109,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     is_vendor = models.BooleanField(
-        verbose_name = _('IS_VENDOR'),
+        verbose_name = _('IS VENDOR'),
         default = False,
     )
 
@@ -134,7 +134,7 @@ class Vendor(models.Model):
     )
 
     store_name = models.CharField(
-        verbose_name = _('STORE_NAME'),
+        verbose_name = _('STORE NAME'),
         max_length = 255,
     )
 
@@ -145,7 +145,7 @@ class Vendor(models.Model):
     )
 
     is_approved = models.BooleanField(
-        verbose_name = _('IS_APPROVED'),
+        verbose_name = _('IS APPROVED'),
         default = False
     )
 
@@ -235,16 +235,16 @@ class Product(models.Model):
     )
 
     is_active = models.BooleanField(
-        verbose_name = _('IS_ACTIVE'),
+        verbose_name = _('IS ACTIVE'),
         default = True,
     )
 
     created_at = models.DateTimeField(
-        verbose_name = _('CREATED_AT'),
+        verbose_name = _('CREATED AT'),
         auto_now_add = True,
     )
     updated_at = models.DateTimeField(
-        verbose_name = _('UPDATED_AT'),
+        verbose_name = _('UPDATED AT'),
         auto_now = True,
     )
 
@@ -280,8 +280,8 @@ class Attribute(models.Model):
 class AttributeValue(models.Model):
 
     class Meta:
-        verbose_name = _('ATTRIBUTE_VALUE')
-        verbose_name_plural = _('ATTRIBUTE_VALUES')
+        verbose_name = _('ATTRIBUTE VALUE')
+        verbose_name_plural = _('ATTRIBUTE VALUES')
 
     attribute = models.ForeignKey(
         verbose_name = _('ATTRIBUTE'),
@@ -305,8 +305,8 @@ class AttributeValue(models.Model):
 class ProductImage(models.Model):
 
     class Meta:
-        verbose_name = _('PRODUCT_IMAGE')
-        verbose_name_plural = _('PRODUCT_IMAGES')
+        verbose_name = _('PRODUCT IMAGE')
+        verbose_name_plural = _('PRODUCT IMAGES')
         ordering = ['rank', 'created_at']
 
     product = models.ForeignKey(
@@ -324,18 +324,18 @@ class ProductImage(models.Model):
     )
 
     is_default = models.BooleanField(
-        verbose_name = _('IS_DEFAULT'),
+        verbose_name = _('IS DEFAULT'),
         default = False,
     )
 
     rank = models.PositiveIntegerField(
         verbose_name = _('RANK'),
         default = 0,
-        help_text = _('THE_RANK_OF_IMAGE'),
+        help_text = _('THE RANK OF IMAGE'),
     )
 
     created_at = models.DateTimeField(
-        verbose_name = _('CREATED_AT'),
+        verbose_name = _('CREATED AT'),
         auto_now_add = True,
     )
 
@@ -349,9 +349,9 @@ class ProductImage(models.Model):
         )
 
     def clean(self):
-        '''
+        """
             Make sure only one default image for product.
-        '''
+        """
         if self.is_default:
             ProductImage.objects.filter(
                 product=self.product, is_default=True
@@ -361,8 +361,8 @@ class ProductImage(models.Model):
 class ProductVariant(models.Model):
 
     class Meta:
-        verbose_name = _('PRODUCT_VARIANT')
-        verbose_name_plural = _('PRODUCT_VARIANTS')
+        verbose_name = _('PRODUCT VARIANT')
+        verbose_name_plural = _('PRODUCT VARIANTS')
 
     product = models.ForeignKey(
         to = Product,
@@ -373,7 +373,7 @@ class ProductVariant(models.Model):
 
     attribute_value = models.ForeignKey(
         to = AttributeValue,
-        verbose_name = _('ATTRIBUTE_VALUE'),
+        verbose_name = _('ATTRIBUTE VALUE'),
         # related_name = 'productvariant_set',
         on_delete = models.CASCADE,
     )
@@ -388,7 +388,7 @@ class ProductVariant(models.Model):
     )
 
     price_modifier = models.DecimalField(
-        verbose_name = _('PRICE_MODIFIER'),
+        verbose_name = _('PRICE MODIFIER'),
         max_digits = 10,
         decimal_places = 2,
         default = 0,
@@ -396,16 +396,16 @@ class ProductVariant(models.Model):
 
     def __str__(self):
         return ('{}: {} [{}: {}]').format(
-            _('PRODUCT_VARIANT'),
+            _('PRODUCT VARIANT'),
             self.product.name,
             self.attribute_value.attribute.name,
             self.attribute_value.value,
         )
     
     def get_image(self):
-        '''
+        """
             Return the image for the variant or the default product image.
-        '''
+        """
         if self.image:
             return self.image.image.url
         default_image = self.product.images.filter(is_default=True).first()
@@ -420,6 +420,7 @@ class Cart(models.Model):
 
     user = models.ForeignKey(
         to = User,
+        verbose_name = _('USER'),
         on_delete = models.CASCADE,
         # related_name = 'cart_set',
     )
@@ -432,12 +433,12 @@ class Cart(models.Model):
     )
 
     created_at = models.DateTimeField(
-        verbose_name = _('CREATED_AT'),
+        verbose_name = _('CREATED AT'),
         auto_now_add = True,
     )
 
     updated_at = models.DateTimeField(
-        verbose_name = _('UPDATED_AT'),
+        verbose_name = _('UPDATED AT'),
         auto_now = True,
     )
 
@@ -454,8 +455,8 @@ class Cart(models.Model):
 class CartItem(models.Model):
 
     class Meta:
-        verbose_name = _('CART_ITEM')
-        verbose_name_plural = _('CART_ITEMS')
+        verbose_name = _('CART ITEM')
+        verbose_name_plural = _('CART ITEMS')
 
     cart = models.ForeignKey(
         to = Cart,
@@ -473,7 +474,7 @@ class CartItem(models.Model):
 
     variant = models.ForeignKey(
         to = ProductVariant,
-        verbose_name = _('PRODUCT_VARIANT'),
+        verbose_name = _('PRODUCT VARIANT'),
         on_delete = models.SET_NULL,
         null = True,
         blank = True,
@@ -481,17 +482,23 @@ class CartItem(models.Model):
     )
 
     quantity = models.PositiveIntegerField(
+        verbose_name = _('QUANTITY'),
         default = 1,
     )
 
     def __str__(self):
-        return f'CartItem: {self.product} ( Cart: {self.cart} )'
+        return ('{}: {} ( {}: {} )').format(
+            _('CART ITEM'),
+            self.product,
+            _('CART'),
+            self.cart,
+        )
 
     def clean(self):
         if self.cart.vendor != self.product.vendor:
-            raise ValidationError(
-                'The product\'s vendor does not match the cart\'s vendor.'
-            )
+            raise ValidationError(_(
+                'THE PRODUCT\'S VENDOR DOES NOT MATCH THE CART\'S VENDOR'
+            ))
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -500,19 +507,26 @@ class CartItem(models.Model):
 
 class Order(models.Model):
 
+    class Meta:
+        verbose_name = _('ORDER')
+        verbose_name_plural = _('ORDERS')
+
     user = models.ForeignKey(
         to = User,
+        verbose_name = _('USER'),
         on_delete = models.CASCADE,
         # related_name = 'order_set',
     )
 
     vendor = models.ForeignKey(
         to = Vendor,
+        verbose_name = _('VENDOR'),
         on_delete = models.CASCADE,
         # related_name = 'order_set',
     )
 
     total_price = models.DecimalField(
+        verbose_name = _('TOTAL PRICE'),
         max_digits = 10,
         decimal_places = 2,
         blank = True,
@@ -520,10 +534,12 @@ class Order(models.Model):
     )
 
     is_paid = models.BooleanField(
+        verbose_name = _('IS PAID'),
         default = False,
     )
 
     status = models.CharField(
+        verbose_name = _('STATUS'),
         max_length = 20,
         choices = (
             ('Pending', 'Pending'),
@@ -536,17 +552,19 @@ class Order(models.Model):
     )
 
     created_at = models.DateTimeField(
+        verbose_name = _('CREATED AT'),
         auto_now_add = True,
     )
 
     updated_at = models.DateTimeField(
+        verbose_name = _('UPDATED AT'),
         auto_now = True,
     )
 
     def calculate_total_price(self):
-        '''
+        """
         Recalculate the total price of the order based on its items.
-        '''
+        """
         try:
             if self.pk is None:
                 return
@@ -606,9 +624,9 @@ class OrderItem(models.Model):
         return f'OrderItem: {self.product} ( Variant: {self.variant} )'
 
     def calculate_price(self):
-        '''
+        """
         Calculate the price for this item, considering variant modifiers.
-        '''
+        """
         base_price = self.product.price
         variant_modifier = self.variant.price_modifier if self.variant else 0
         self.price = base_price + variant_modifier
@@ -710,9 +728,9 @@ class Payment(models.Model):
     )
 
     def calculate_payment_amount(self):
-        '''
+        """
         Calculate the payment amount after applying any valid vouchers.
-        '''
+        """
         try:
             if self.pk is None:
                 return

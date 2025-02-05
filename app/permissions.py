@@ -76,7 +76,7 @@ def own_order_required(view_func):
 
 
 def multi_ownership_required(ownership_rules):
-    '''
+    """
     ownership_rules:
         A dictionary mapping object_id_field -> (Model, user_field)
 
@@ -85,7 +85,7 @@ def multi_ownership_required(ownership_rules):
             'order_id': (Order, 'user'),
             'payment_id': (Payment, 'user')
         }
-    '''
+    """
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
