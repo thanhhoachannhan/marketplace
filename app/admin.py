@@ -65,9 +65,9 @@ class ProductVariantInline(admin.TabularInline):
                 ),
                 obj.image.file.url,
             )
-        return 'No Image'
+        return _('NO IMAGE')
 
-    product_image_preview.short_description = 'Image'
+    product_image_preview.short_description = _('IMAGE')
 
 
 class AttributeValueInline(admin.TabularInline):
@@ -103,9 +103,9 @@ class ProductImageInline(admin.TabularInline):
                 ),
                 obj.file.url,
             )
-        return 'No Image'
+        return _('NO IMAGE')
 
-    product_image_preview.short_description = 'File'
+    product_image_preview.short_description = _('FILE')
 
 
 admin.site.unregister(Group)
@@ -144,7 +144,7 @@ class UserAdmin(UserAdmin):
                 'is_vendor',
             )
         }),
-        ('Advanced options', {
+        (_('ADVANCED OPTIONS'), {
             'classes': ('collapse'),
             'fields': (
                 'is_active',
@@ -189,7 +189,7 @@ class UserAdmin(UserAdmin):
                 ),
                 obj.avatar.url,
             )
-        return 'No Avatar'
+        return _('NO AVATAR')
     
     def view_vendor(self, obj):
         if obj.is_vendor:
@@ -199,10 +199,10 @@ class UserAdmin(UserAdmin):
                 return mark_safe(f'<a href="{url}">{vendor.store_name}</a>')
         return None
     
-    avatar_preview.short_description = 'Avatar'
+    avatar_preview.short_description = _('AVATAR')
 
+    view_vendor.short_description = _('VENDOR')
 
-    view_vendor.short_description = 'Vendor'
 
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin):
@@ -228,7 +228,7 @@ class VendorAdmin(admin.ModelAdmin):
             url = reverse('admin:app_user_change', args=[obj.user.id])
             return format_html('<a href="{}">{}</a>', url, obj.user.username)
         return '-'
-    user_link.short_description = 'User'
+    user_link.short_description = _('USER')
     user_link.admin_order_field = 'user'
 
 
@@ -278,9 +278,9 @@ class ProductAdmin(admin.ModelAdmin):
                 ),
                 obj.get_default_image().file.url,
             )
-        return 'No Default Image'
+        return _('NO DEFAULT IMAGE')
     
-    default_image_preview.short_description = 'Default Image'
+    default_image_preview.short_description = _('DEFAULT IMAGE')
 
 
 @admin.register(ProductVariant)
@@ -301,9 +301,9 @@ class ProductVariantAdmin(admin.ModelAdmin):
                 ),
                 obj.image.file.url,
             )
-        return 'No Image'
+        return _('NO IMAGE')
     
-    product_image_preview.short_description = 'Image'
+    product_image_preview.short_description = _('IMAGE')
 
 
 @admin.register(Attribute)
