@@ -27,6 +27,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from django.utils.translation import gettext_lazy as _
 
 from .forms import *
 from .models import *
@@ -63,8 +64,7 @@ def login(request):
                 next_url = request.GET.get('next', 'index')
                 return redirect(next_url)
         else:
-            print('form is not valid')
-            print(form.errors)
+            messages.error(request, form.errors)
         return redirect(reverse('login'))
     
     return render(request, 'account/login.html', {
@@ -94,7 +94,7 @@ def register(request):
             user.password = make_password(form.cleaned_data['password'])
             user.save()
             
-            messages.success(request, 'Register successfully!')
+            messages.success(request, _('REGISTER SUCCESSFULLY'))
 
             return redirect(reverse('login'))
 
@@ -118,7 +118,7 @@ def profile(request):
 
         if form.is_valid():
             form.save()
-            messages.success(request, 'Updated successfully!')
+            messages.success(request, _('UPDATED SUCCESSFULLY'))
             return redirect('profile')
         
     form = ProfileForm(instance=request.user)
@@ -141,10 +141,10 @@ def change_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
-            messages.success(request, 'Changed successfully!')
+            messages.success(request, _('CHANGED SUCCESSFULLY'))
             return redirect('profile')
         else:
-            messages.error(request, 'Please correct the error.')
+            messages.error(request, form.errors)
 
     form = PasswordChangeForm(user=request.user)
 

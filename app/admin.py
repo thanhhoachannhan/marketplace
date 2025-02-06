@@ -1,15 +1,13 @@
 
 from django.apps import apps
 from django.contrib import admin
-
-from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.contrib.auth.models import Group
+from django.contrib.auth.forms import UserChangeForm, ReadOnlyPasswordHashField
 from django.utils.translation import gettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from django.urls import reverse
-from django.contrib.auth.forms import UserChangeForm, ReadOnlyPasswordHashField
 
 from .models import *
 
