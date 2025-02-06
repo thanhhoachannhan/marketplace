@@ -3,13 +3,13 @@ from django.apps import apps
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.contrib.auth.models import Group
-from django.contrib.auth.forms import UserChangeForm, ReadOnlyPasswordHashField
 from django.utils.translation import gettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from django.urls import reverse
 
 from .models import *
+from .forms import *
 
 
 class CartInline(admin.StackedInline):
@@ -125,16 +125,6 @@ class UserAdmin(UserAdmin):
         
     class Meta:
         ordering = ('date_joined')
-
-    
-    class UserChangeForm(UserChangeForm):
-        password = ReadOnlyPasswordHashField(
-            label=_('PASSWORD'),
-            help_text=_(
-                'RAW PASSWORD NOT SAFE, YOU CAN CHANGE BY '
-                '<a href=\'{}\'> FORM </a>.'
-            ),
-        )
 
     inlines = [
         VendorInline,

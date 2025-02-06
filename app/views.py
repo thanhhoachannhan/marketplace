@@ -47,7 +47,7 @@ def login(request):
         return redirect(reverse('index'))
     
     if request.method == 'POST':
-        form = LoginForm(request, data=request.POST)
+        form = AuthenticationForm(request, data=request.POST)
         
         if form.is_valid():
             username = form.cleaned_data.get('username')
@@ -68,7 +68,7 @@ def login(request):
         return redirect(reverse('login'))
     
     return render(request, 'account/login.html', {
-        'form': LoginForm()
+        'form': AuthenticationForm()
     })
 
 
