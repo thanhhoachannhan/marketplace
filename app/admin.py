@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from django.urls import reverse
+from django.contrib.auth.forms import UserChangeForm, ReadOnlyPasswordHashField
 
 from .models import *
 
@@ -127,10 +128,22 @@ class UserAdmin(UserAdmin):
     class Meta:
         ordering = ('date_joined')
 
+    
+    class UserChangeForm(UserChangeForm):
+        password = ReadOnlyPasswordHashField(
+            label=_('PASSWORD'),
+            help_text=_(
+                'RAW PASSWORD NOT SAFE, YOU CAN CHANGE BY '
+                '<a href=\'{}\'> FORM </a>.'
+            ),
+        )
+
     inlines = [
         VendorInline,
         CartInline,
     ]
+
+    form = UserChangeForm
 
     fieldsets = (
         (None, {

@@ -60,6 +60,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         ]
     )
 
+    password = models.CharField(
+        verbose_name = _("PASSWORD"),
+        max_length = 128,
+    )
+
     fullname = models.CharField(
         verbose_name = _('FULLNAME'),
         max_length = 100,
@@ -110,6 +115,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     groups = models.ManyToManyField(
         to = UserGroup,
         verbose_name = _('GROUPS'),
+        blank = True,
+    )
+
+    user_permissions = models.ManyToManyField(
+        to = Permission,
+        verbose_name = _("USER PERMISSIONS"),
         blank = True,
     )
 
