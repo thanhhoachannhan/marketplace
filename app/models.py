@@ -87,6 +87,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         null = True,
     )
 
+    is_superuser = models.BooleanField(
+        verbose_name = _('IS SUPERUSER'),
+        default = False,
+    )
+
     is_staff = models.BooleanField(
         verbose_name = _('IS STAFF'),
         default = False,
