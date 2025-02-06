@@ -775,11 +775,11 @@ class Payment(models.Model):
         verbose_name = _('STATUS'),
         max_length = 20,
         choices = [
-            ('Pending', 'Pending'),
-            ('Completed', 'Completed'),
-            ('Failed', 'Failed'),
+            ('PENDING', _('PENDING')),
+            ('COMPLETED', _('COMPLETED')),
+            ('FAILED', _('FAILED')),
         ],
-        default = 'Pending',
+        default = 'PENDING',
     )
 
     def __str__(self):
