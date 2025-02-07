@@ -32,11 +32,13 @@ class UserChangeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
         password = self.fields.get('password')
         if password:
             password.help_text = password.help_text.format(
                 f'../../{self.instance.pk}/password/'
             )
+
         user_permissions = self.fields.get('user_permissions')
         if user_permissions:
             user_permissions.queryset = \
@@ -70,11 +72,11 @@ class AuthenticationForm(forms.Form):
         self.user_cache = None
         super().__init__(*args, **kwargs)
 
-        # Set the max length and label for the 'username' field.
         self.username_field = User._meta.get_field(User.USERNAME_FIELD)
         username_max_length = self.username_field.max_length or 254
         self.fields['username'].max_length = username_max_length
         self.fields['username'].widget.attrs['maxlength'] = username_max_length
+
         if self.fields['username'].label is None:
             self.fields['username'].label = \
                 capfirst(self.username_field.verbose_name)
@@ -107,9 +109,9 @@ class AuthenticationForm(forms.Form):
 
     def get_invalid_login_error(self):
         return ValidationError(
-            self.error_messages['invalid_login'],
-            code='invalid_login',
-            params={'username': self.username_field.verbose_name},
+            message = self.error_messages['invalid_login'],
+            code = 'invalid_login',
+            params = {'username': self.username_field.verbose_name},
         )
 
 
