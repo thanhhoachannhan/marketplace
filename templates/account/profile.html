@@ -1,12 +1,14 @@
 
 {% extends 'account/base.html' %}
 
+{% load i18n %}
+
 {% block content %}
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">update</button>
+    <button type="submit">{% trans 'UPDATE' %}</button>
 </form>
 
 {% endblock content %}
