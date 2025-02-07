@@ -15,14 +15,12 @@ User = get_user_model()
 
 
 class UserChangeForm(forms.ModelForm):
-    """
-        From django.contrib.auth.forms
-    """
+    """ From django.contrib.auth.forms """
 
     class Meta:
         model = User
-        fields = "__all__"
-        field_classes = {"username": UsernameField}
+        fields = '__all__'
+        field_classes = {'username': UsernameField}
     
     password = ReadOnlyPasswordHashField(
         label=_('PASSWORD'),
@@ -34,22 +32,19 @@ class UserChangeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        password = self.fields.get("password")
+        password = self.fields.get('password')
         if password:
             password.help_text = password.help_text.format(
-                f"../../{self.instance.pk}/password/"
+                f'../../{self.instance.pk}/password/'
             )
-        user_permissions = self.fields.get("user_permissions")
+        user_permissions = self.fields.get('user_permissions')
         if user_permissions:
-            user_permissions.queryset = user_permissions.queryset.select_related(
-                "content_type"
-            )
+            user_permissions.queryset = \
+                user_permissions.queryset.select_related('content_type')
 
 
 class AuthenticationForm(forms.Form):
-    """
-        From django.contrib.auth.forms
-    """
+    """ From django.contrib.auth.forms """
 
     username = UsernameField(
         widget = forms.TextInput(
@@ -81,7 +76,8 @@ class AuthenticationForm(forms.Form):
         self.fields['username'].max_length = username_max_length
         self.fields['username'].widget.attrs['maxlength'] = username_max_length
         if self.fields['username'].label is None:
-            self.fields['username'].label = capfirst(self.username_field.verbose_name)
+            self.fields['username'].label = \
+                capfirst(self.username_field.verbose_name)
 
     def clean(self):
         username = self.cleaned_data.get('username')

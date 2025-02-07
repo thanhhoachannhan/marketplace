@@ -59,8 +59,8 @@ class ProductVariantInline(admin.TabularInline):
         if obj.image and obj.image.file and hasattr(obj.image.file, 'url'):
             return format_html(
                 (
-                    '<img src="{}"'
-                    'style="width:50px; height:50px;" />'
+                    '<img src=\'{}\''
+                    'style=\'width:50px; height:50px;\' />'
                 ),
                 obj.image.file.url,
             )
@@ -97,8 +97,8 @@ class ProductImageInline(admin.TabularInline):
         if obj.file and hasattr(obj.file, 'url'):
             return format_html(
                 (
-                    '<img src="{}"'
-                    'style="width:50px; height:50px;" />'
+                    '<img src=\'{}\''
+                    'style=\'width:50px; height:50px;\' />'
                 ),
                 obj.file.url,
             )
@@ -185,8 +185,8 @@ class UserAdmin(UserAdmin):
         if obj.avatar:
             return format_html(
                 (
-                    '<img src="{}"'
-                    'style="width:50px; height:50px; border-radius:50%;" />'
+                    '<img src=\'{}\''
+                    'style=\'width:50px; height:50px; border-radius:50%;\' />'
                 ),
                 obj.avatar.url,
             )
@@ -197,7 +197,7 @@ class UserAdmin(UserAdmin):
             vendor = Vendor.objects.filter(user=obj).first()
             if vendor:
                 url = f'/admin/app/vendor/{vendor.id}/change/'
-                return mark_safe(f'<a href="{url}">{vendor.store_name}</a>')
+                return mark_safe(f'<a href=\'{url}\'>{vendor.store_name}</a>')
         return None
     
     avatar_preview.short_description = _('AVATAR')
@@ -227,7 +227,7 @@ class VendorAdmin(admin.ModelAdmin):
     def user_link(self, obj):
         if obj.user:
             url = reverse('admin:app_user_change', args=[obj.user.id])
-            return format_html('<a href="{}">{}</a>', url, obj.user.username)
+            return format_html('<a href=\'{}\'>{}</a>', url, obj.user.username)
         return '-'
     user_link.short_description = _('USER')
     user_link.admin_order_field = 'user'
@@ -274,8 +274,8 @@ class ProductAdmin(admin.ModelAdmin):
         if obj.get_default_image():
             return format_html(
                 (
-                    '<img src="{}"'
-                    'style="width:50px; height:50px;" />'
+                    '<img src=\'{}\''
+                    'style=\'width:50px; height:50px;\' />'
                 ),
                 obj.get_default_image().file.url,
             )
@@ -297,8 +297,8 @@ class ProductVariantAdmin(admin.ModelAdmin):
         if obj.image and obj.image.file and hasattr(obj.image.file, 'url'):
             return format_html(
                 (
-                    '<img src="{}"'
-                    'style="width:50px; height:50px;" />'
+                    '<img src=\'{}\''
+                    'style=\'width:50px; height:50px;\' />'
                 ),
                 obj.image.file.url,
             )

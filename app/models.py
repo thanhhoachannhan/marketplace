@@ -61,7 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     password = models.CharField(
-        verbose_name = _("PASSWORD"),
+        verbose_name = _('PASSWORD'),
         max_length = 128,
     )
 
@@ -120,7 +120,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     user_permissions = models.ManyToManyField(
         to = Permission,
-        verbose_name = _("USER PERMISSIONS"),
+        verbose_name = _('USER PERMISSIONS'),
         blank = True,
     )
 
@@ -168,7 +168,7 @@ class Vendor(models.Model):
     def __str__(self):
         return ('{} [{}: {}]').format(
             self.store_name,
-            _("OWN"),
+            _('OWN'),
             self.user,
         )
 
@@ -365,9 +365,7 @@ class ProductImage(models.Model):
         )
 
     def clean(self):
-        """
-            Make sure only one default image for product.
-        """
+        """ Make sure only one default image for product. """
         if self.is_default:
             ProductImage.objects.filter(
                 product=self.product, is_default=True
@@ -419,9 +417,7 @@ class ProductVariant(models.Model):
         )
     
     def get_image(self):
-        """
-            Return the image for the variant or the default product image.
-        """
+        """ Return the image for the variant or the default product image. """
         if self.image:
             return self.image.image.url
         default_image = self.product.images.filter(is_default=True).first()
@@ -589,9 +585,7 @@ class Order(models.Model):
         )
 
     def calculate_total_price(self):
-        """
-        Recalculate the total price of the order based on its items.
-        """
+        """ Recalculate the total price of the order based on its items. """
         try:
             if self.pk is None:
                 return
@@ -659,9 +653,7 @@ class OrderItem(models.Model):
         )
 
     def calculate_price(self):
-        """
-        Calculate the price for this item, considering variant modifiers.
-        """
+        """ Calculate the price for this item, considering variant modifiers """
         base_price = self.product.price
 
         variant_modifier = 0
@@ -807,9 +799,7 @@ class Payment(models.Model):
         )
     
     def calculate_payment_amount(self):
-        """
-        Calculate the payment amount after applying any valid vouchers.
-        """
+        """ Calculate the payment amount after applying any valid vouchers. """
         try:
             if self.pk is None:
                 return
