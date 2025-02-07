@@ -39,7 +39,10 @@ class Command(BaseCommand):
                     fullname = faker.name(),
                     address = faker.address(),
 
-                    is_vendor = random_boolean(),
+                    is_vendor = random_boolean(
+                        true_weight = 0.75,
+                        false_weight = 0.25
+                    ),
                 )
 
                 avatar_url = faker.image_url(
